@@ -312,67 +312,37 @@ def menu_section_details(request, id):
         })
     return render(request, 'user_details.html', {'menu_section': menu_section})
 @csrf_exempt
-def food_allergens(request, user_id):
-   food_allergen = get_object_or_404(Food_Allergen, id=user_id)
-
-
-
-   # if request.method == 'POST':
-   #    data = request.POST
-   #    allergyname = data.get('allergyname')
-   #    test_level = data.get('test_level')
-   #    category = data.get('category')
-
-   #    new_allergy = Allergy.objects.create(
-   #    allergyname=allergyname,
-   #    test_level=test_level,
-   #    category=category,
-   #  )
-   #    user.allergies.add(new_allergy)
-
-   #    return redirect('user_details', user_id=user.id)
+def food_allergens(request, food_allergen_id):
+   food_allergen = get_object_or_404(Food_Allergen, id=food_allergen_id)
 
 
    if request.method == 'POST':
+        allergen_name = request.POST.get('allergen')
+        if not allergen_name:
+            return JsonResponse({'error': 'Allergen name is required'}, status=400)
+        
         try:
-            allergen = request.POST.get('allergen')
-            if not allergen:
-                return JsonResponse({'error': 'allergen and menu_id are needed buckaroo'}, status=400)
+            new_allergy = Allergy.objects.create(allergen=allergen_name)
+            food_allergen.allergies.add(new_allergy)
 
-            menu = Menu.objects.get(id=menu_id)
-            new_section = Menu_Section.objects.create(title=title)
-
-            menu.sections.add(new_section)
-
-
-
-
-            return JsonResponse({'status': 'created', 'menu_section_id':new_section.id}, status=201)
-        except json.JSONDecodeError:
-            return JsonResponse({'error': 'Invalid JSON'}, status=400)
+            return JsonResponse({'status': 'created', 'food_allergen_id': new_allergy.id}, status=201)
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
-
-
-   if request.GET.get('search'):
-       menu_sections = menu_sections.filter(title__icontains=request.GET.get('search'))
+        
+   food_allergens = Food_Allergen.objects.all()
+   search_query = request.GET.get('search')
+   if search_query:
+       food_allergens = food_allergens.filter(allergen__icontains=search_query)
 
    context = {
-        'menus': menus,
-        'myuser': user,
-        'menu_sections': menu_sections
+        'food_allergens': food_allergens,
     }
    
    return render(request, 'user_details.html', context)
 
 def delete_food_allergen(request, id):
    food_allergen = get_object_or_404(Food_Allergen, id=id)
-   menus = Menu.objects.filter(food_allergens=food_allergen)
-
-   owner = None
-   if menus.exists():
-       owner = menus.first().restaurant.owner
-
+   
    for menu in menus:
        menu.sections.remove(menu_section)
    menu_section.delete()
