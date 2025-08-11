@@ -219,12 +219,12 @@ def menu_sections(request, user_id):
         try:
             data = json.loads(request.body)
             title = data.get('title')
-            menu_id = data.get('menu_id')
+            menu_section_id = data.get('menu_section_id')
 
-            if not title or not menu_id:
-                return JsonResponse({'error': 'title and menu_id are needed buckaroo'}, status=400)
+            if not title or not menu_section_id:
+                return JsonResponse({'error': 'title and menu_section_id are needed buckaroo'}, status=400)
 
-            menu = Menu.objects.get(id=menu_id)
+            menu = Menu.objects.get(id=menu_section_id)
             new_section = Menu_Section.objects.create(title=title)
 
             menu.sections.add(new_section)
@@ -312,11 +312,9 @@ def menu_section_details(request, id):
         })
     return render(request, 'user_details.html', {'menu_section': menu_section})
 @csrf_exempt
-def foods(request, user_id):
-   food = get_object_or_404(Food, id=user_id)
-   restaurants = Restaurant.objects.filter(owner=user)
-   menus = Menu.objects.filter(restaurant__in=restaurants).distinct()
-   menu_sections = Menu_Section.objects.all() 
+def food_allergens(request, user_id):
+   food_allergen = get_object_or_404(Food_Allergen, id=user_id)
+
 
 
    # if request.method == 'POST':
@@ -337,12 +335,9 @@ def foods(request, user_id):
 
    if request.method == 'POST':
         try:
-            data = json.loads(request.body)
-            title = data.get('title')
-            menu_id = data.get('menu_id')
-
-            if not title or not menu_id:
-                return JsonResponse({'error': 'title and menu_id are needed buckaroo'}, status=400)
+            allergen = request.POST.get('allergen')
+            if not allergen:
+                return JsonResponse({'error': 'allergen and menu_id are needed buckaroo'}, status=400)
 
             menu = Menu.objects.get(id=menu_id)
             new_section = Menu_Section.objects.create(title=title)
@@ -370,10 +365,10 @@ def foods(request, user_id):
    
    return render(request, 'user_details.html', context)
 
-def delete_food(request, id):
-   menu_section = get_object_or_404(Menu_Section, id=id)
-   menus = Menu.objects.filter(sections=menu_section)
-   
+def delete_food_allergen(request, id):
+   food_allergen = get_object_or_404(Food_Allergen, id=id)
+   menus = Menu.objects.filter(food_allergens=food_allergen)
+
    owner = None
    if menus.exists():
        owner = menus.first().restaurant.owner
@@ -387,7 +382,7 @@ def delete_food(request, id):
    return redirect('users')
     
 
-def update_food(request, id):
+def update_food_allergen(request, id):
     food = get_object_or_404(Food, id=id)
     menu = menu_section.menu_set.first()
     restaurant = menu.restaurant if menu else None
@@ -418,7 +413,7 @@ def update_food(request, id):
     
 
 
-def food_details(request, id):
+def food_allergen_details(request, id):
     menu_section = get_object_or_404(Menu_Section, id=id)
     menus = menu_section.menu_set_all()
     restaurant = menus.first().restaurant if menus.exists() else None
