@@ -374,17 +374,13 @@ def update_food_allergen(request, id):
 
 def food_allergen_details(request, id):
     food_allergen = get_object_or_404(Food_Allergen, id=id)
-    menus = food_allergen.menu_set.all()
-    restaurant = menus.first().restaurant if menus.exists() else None
 
     if request.headers.get('Accept') == 'application/json' or request.GET.get('format') == 'json':
         return JsonResponse({
-            'id': menu_section.id,
-            'title': menu_section.title,
-            'restaurant': menu_section.restaurant.id if menu_section.restaurant else None,
-            'sections': list(menu_section.sections.values_list('id', flat=True)),
+            'allergen': food_allergen.allergen,
+            'id': food_allergen.id,
         })
-    return render(request, 'user_details.html', {'menu_section': menu_section})
+    return render(request, 'user_details.html', {'food_allergen': food_allergen})
 
 
 def main(request):
