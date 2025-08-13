@@ -341,47 +341,40 @@ def food_allergens(request, food_allergen_id):
    return render(request, 'user_details.html', context)
 
 def delete_food_allergen(request, id):
-   if request.method == 'DELETE':
-       food_allergen = get_object_or_404(Food_Allergen, id=id)
-       food_allergen.delete()
-       return JsonResponse({'status': 'deleted'}, status=204)
+   food_allergen = get_object_or_404(Food_Allergen, id=food_allergen_id)
 
-   return JsonResponse({'error': 'Only DELETE method allowed'}, status=405)
+    # Remove relationships before deleting
+   menu_sections = food_allergen.menu_sections.all()
+   for section in menu_sections:
+        section.food_allergens.remove(food_allergen)
+
+   food_allergen.delete()
+
+    # Redirect back to the referring page or a safe fallback
+   return redirect(request.META.get('HTTP_REFERER', 'food_allergens'))
+
 
 def update_food_allergen(request, id):
-    food = get_object_or_404(Food, id=id)
-    menu = menu_section.menu_set.first()
-    restaurant = menu.restaurant if menu else None
-    user = restaurant.owner if restaurant else None
+    food_allergen = get_object_or_404(Food_Allergen, id=id)
 
     if request.method == 'POST':
-        title = request.POST.get('title')
-        menu_id = request.POST.get('menu_id')
+        new_allergen = request.POST.get('allergen')
+
+        if new_allergen in dict(Food_Allergen.ALLERGY_CHOICES):
+            food_allergen.allergen = new_allergen
+            food_allergen.save()
+            return redirect("food_allergens")
+        else:
+            return HttpResponse("Invalid allergen choice.", status=400)
         
-        if title: 
-            menu_section.title = title
+    return redirect('user_details', {"food_allergen": food_allergen})
 
-        if menu_id:
-            new_menu = get_object_or_404(Menu, id=menu_id)
-            menu_section.menu_set.clear()
-            menu_section.menu_set.add(new_menu)
-
-        menu_section.save()
-        return redirect('user_details', user_id=user.id if user else None)
-
-    menus = restaurant.menus.all() if restaurant else Menu.objects.none()
-    return render(request, 'user_details.html',{
-        'myuser': user,
-        'menus': menus,
-        'selected_menu': menu,
-        'selected_menu_section': menu_section
-    })
     
 
 
 def food_allergen_details(request, id):
-    menu_section = get_object_or_404(Menu_Section, id=id)
-    menus = menu_section.menu_set_all()
+    food_allergen = get_object_or_404(Food_Allergen, id=id)
+    menus = food_allergen.menu_set.all()
     restaurant = menus.first().restaurant if menus.exists() else None
 
     if request.headers.get('Accept') == 'application/json' or request.GET.get('format') == 'json':
