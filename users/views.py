@@ -341,16 +341,12 @@ def food_allergens(request, food_allergen_id):
    return render(request, 'user_details.html', context)
 
 def delete_food_allergen(request, id):
-   food_allergen = get_object_or_404(Food_Allergen, id=id)
-   
-   for menu in menus:
-       menu.sections.remove(menu_section)
-   menu_section.delete()
- 
-   if owner:
-         return redirect('user_details', user_id=owner.id)
-   return redirect('users')
-    
+   if request.method == 'DELETE':
+       food_allergen = get_object_or_404(Food_Allergen, id=id)
+       food_allergen.delete()
+       return JsonResponse({'status': 'deleted'}, status=204)
+
+   return JsonResponse({'error': 'Only DELETE method allowed'}, status=405)
 
 def update_food_allergen(request, id):
     food = get_object_or_404(Food, id=id)
