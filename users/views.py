@@ -382,6 +382,126 @@ def food_allergen_details(request, id):
         })
     return render(request, 'user_details.html', {'food_allergen': food_allergen})
 
+@csrf_exempt
+def Foods(request, user_id):
+   user = get_object_or_404(CustomUser, id=user_id)
+   restaurants = Restaurant.objects.filter(owner=user)
+   menus = Menu.objects.filter(restaurant__in=restaurants).distinct()
+   menu_sections = Menu_Section.objects.all() 
+
+
+   # if request.method == 'POST':
+   #    data = request.POST
+   #    allergyname = data.get('allergyname')
+   #    test_level = data.get('test_level')
+   #    category = data.get('category')
+
+   #    new_allergy = Allergy.objects.create(
+   #    allergyname=allergyname,
+   #    test_level=test_level,
+   #    category=category,
+   #  )
+   #    user.allergies.add(new_allergy)
+
+   #    return redirect('user_details', user_id=user.id)
+
+
+   if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            title = data.get('title')
+            menu_section_id = data.get('menu_section_id')
+
+            if not title or not menu_section_id:
+                return JsonResponse({'error': 'title and menu_section_id are needed buckaroo'}, status=400)
+
+            menu = Menu.objects.get(id=menu_section_id)
+            new_section = Menu_Section.objects.create(title=title)
+
+            menu.sections.add(new_section)
+
+
+
+
+            return JsonResponse({'status': 'created', 'menu_section_id':new_section.id}, status=201)
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON'}, status=400)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+
+
+   if request.GET.get('search'):
+       menu_sections = menu_sections.filter(title__icontains=request.GET.get('search'))
+
+   context = {
+        'menus': menus,
+        'myuser': user,
+        'menu_sections': menu_sections
+    }
+   
+   return render(request, 'user_details.html', context)
+
+def delete_foods(request, id):
+   menu_section = get_object_or_404(Menu_Section, id=id)
+   menus = Menu.objects.filter(sections=menu_section)
+   
+   owner = None
+   if menus.exists():
+       owner = menus.first().restaurant.owner
+
+   for menu in menus:
+       menu.sections.remove(menu_section)
+   menu_section.delete()
+ 
+   if owner:
+         return redirect('user_details', user_id=owner.id)
+   return redirect('users')
+    
+
+def update_foods(request, id):
+    menu_section = get_object_or_404(Menu_Section, id=id)
+    menu = menu_section.menu_set.first()
+    restaurant = menu.restaurant if menu else None
+    user = restaurant.owner if restaurant else None
+
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        menu_id = request.POST.get('menu_id')
+        
+        if title: 
+            menu_section.title = title
+
+        if menu_id:
+            new_menu = get_object_or_404(Menu, id=menu_id)
+            menu_section.menu_set.clear()
+            menu_section.menu_set.add(new_menu)
+
+        menu_section.save()
+        return redirect('user_details', user_id=user.id if user else None)
+
+    menus = restaurant.menus.all() if restaurant else Menu.objects.none()
+    return render(request, 'user_details.html',{
+        'myuser': user,
+        'menus': menus,
+        'selected_menu': menu,
+        'selected_menu_section': menu_section
+    })
+    
+
+
+def foods_details(request, id):
+    menu_section = get_object_or_404(Menu_Section, id=id)
+    menus = menu_section.menu_set_all()
+    restaurant = menus.first().restaurant if menus.exists() else None
+
+    if request.headers.get('Accept') == 'application/json' or request.GET.get('format') == 'json':
+        return JsonResponse({
+            'id': menu_section.id,
+            'title': menu_section.title,
+            'restaurant': menu_section.restaurant.id if menu_section.restaurant else None,
+            'sections': list(menu_section.sections.values_list('id', flat=True)),
+        })
+    return render(request, 'user_details.html', {'menu_section': menu_section})
 
 def main(request):
   return render(request, 'user_details.html', {'myuser': request.user})
