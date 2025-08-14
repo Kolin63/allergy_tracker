@@ -530,25 +530,28 @@ def Restaurants(request, user_id):
             location = data.get('location')
             description = data.get('description')
             phone_number = data.get('phone_number')
-            owner = data.get('owner')
             section_id = data.get('section')
             allergen_ids = data.get('allergies', [])
 
-            if not name or not location or not owner:
-                return JsonResponse({'error': 'name, location, and owner are needed buckaroo'}, status=400)
+            if not name or not location:
+                return JsonResponse({'error': 'name and location are needed buckaroo'}, status=400)
 
-            senw_restauranbt = Restaurant.objects.create(
+            new_restaurant = Restaurant.objects.create(
+                owner=user,
                 name=name,
                 location=location,
-                description=description,
-                phone_number=phone_number,
-                owner_id=owner
+                description=description or '',
+                phone_number=phone_number or '',
             )
+            
+            
+  
             if section_id:
                 new_section = get_object_or_404(Menu_Section, id=section_id)
-                senw_restauranbt.menu_sections.add(new_section)
+                new_restaurant.menu_sections.add(new_section)
 
-            return JsonResponse({'status': 'created', 'food_id': new_food.id}, status=201)
+            return JsonResponse({'status': 'created', 'restaurant_id': new_restaurant.id}, status=201)
+
         except json.JSONDecodeError:
             return JsonResponse({'error': 'Invalid JSON'}, status=400)
         except Exception as e:
@@ -629,4 +632,4 @@ def restaurant_details(request, id):
 
 
 def main(request):
-  return render(request, 'user_details.html', {'myuser': request.user})
+    return render(request, 'user_details.html', {'myuser': request.user});
