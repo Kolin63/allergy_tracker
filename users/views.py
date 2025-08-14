@@ -575,9 +575,18 @@ def Restaurants(request, user_id):
    return render(request, 'user_details.html', context)
 
 def delete_restaurants(request, id):
-  food = get_object_or_404(Food, id=id)
-  food.delete()
-  return redirect(request.META.get('HTTP_REFERER', 'foods'))
+  restaurant = get_object_or_404(Restaurant, id=id)
+  menus = Menu.objects.filter(restaurant=restaurant)
+  
+  # Remove the restaurant from all menus
+  for menu in menus:
+      menu.restaurant = None
+      menu.save()
+  
+  # Delete the restaurant
+  restaurant.delete()
+  
+  return redirect(request.META.get('HTTP_REFERER', 'restaurants'))
     
 
 def update_restaurant(request, id):
