@@ -590,37 +590,36 @@ def delete_restaurants(request, id):
     
 
 def update_restaurant(request, id):
-    food = get_object_or_404(Food, id=id)
-    section = food.section
-    restaurant = section.menu_set.first().restaurant if section.menu_set.exists() else None
-    user = restaurant.owner if restaurant else None
-    
+    restaurant = get_object_or_404(Restaurant, id=id)
+    user = restaurant.owner
+
     if request.method == 'POST':
         name = request.POST.get('name')
+        location = request.POST.get('location')
+        description = request.POST.get('description')
+        phone_number = request.POST.get('phone_number')
         section_id = request.POST.get('section')
         allergen_ids = request.POST.getlist('allergies')
+
         if name:
-            food.name = name
+            restaurant.name = name
+    
+        if location:
+            restaurant.location = location 
+        if description:
+            restaurant.description = description
 
-        if section_id:
-            new_section = get_object_or_404(Menu_Section, id=section_id)
-            food.section = new_section
+        if phone_number:
+            restaurant.phone_number = phone_number
 
-        if allergen_ids:
-            food.allergies.set(Allergy.objects.filter(id__in=allergen_ids))
+        restaurant.save()
 
-        food.save()
         return redirect('user_details', user_id=user.id if user else None)
 
-    menu_sections = restaurant.menu_sections.all() if restaurant else Menu_Section.objects.none()
-    food_allergens = Food_Allergen.objects.all()
     return render(request, 'user_details.html', {
         'myuser': user,
-        'menu_sections': menu_sections,
-        'food_allergens': food_allergens,
-        'selected_food': food
+        'selected_restaurant': restaurant,
     })
-    
 
 
 def restaurant_details(request, id):
