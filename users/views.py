@@ -576,8 +576,7 @@ def Restaurants(request, user_id):
 
 def delete_restaurants(request, id):
   restaurant = get_object_or_404(Restaurant, id=id)
-  menus = Menu.objects.filter(restaurant=restaurant)
-  
+  owner = restaurant.owner  
   # Remove the restaurant from all menus
   for menu in menus:
       menu.restaurant = None
@@ -585,9 +584,9 @@ def delete_restaurants(request, id):
   
   # Delete the restaurant
   restaurant.delete()
-  
-  return redirect(request.META.get('HTTP_REFERER', 'restaurants'))
-    
+
+  return redirect('user_details', user_id=owner.id if owner else None)
+
 
 def update_restaurant(request, id):
     restaurant = get_object_or_404(Restaurant, id=id)
@@ -623,20 +622,23 @@ def update_restaurant(request, id):
 
 
 def restaurant_details(request, id):
-    food = get_object_or_404(Food, id=id)
-    section = food.section
-    restaurant = section.menu_set.first().restaurant if section.menu_set.exists() else None
+    restaurant = get_object_or_404(Restaurant, id=id)
+    owner = restaurant.owner
 
     if request.headers.get('Accept') == 'application/json' or request.GET.get('format') == 'json':
         return JsonResponse({
-            'id': food.id,
-            'name': food.name,
-            'section': food.section.id if food.section else None,
-            'allergies': list(food.allergies.values_list('id', flat=True)),
+            'id': restaurant.id,
+            'name': restaurant.name,
+            'location': restaurant.location,
+            'description': restaurant.description,
+            'phone_number': restaurant.phone_number,
+            'owner': owner.id if owner else None,
+            'menu': restaurant.menu.id if restaurant.menu else None,
         })
-    return render(request, 'user_details.html', {'food': food})
-
-
+    return render(request, 'user_details.html', {
+        'selected_restaurant': restaurant,
+        'myuser': owner,
+    })
 
 
 def main(request):
