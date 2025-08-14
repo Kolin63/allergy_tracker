@@ -188,8 +188,6 @@ def menu_details(request, id):
         })
     return render(request, 'user_details.html', {'mymenu': menu})
 
-def main(request):
-  return render(request, 'user_details.html', {'myuser': request.user})
 
 @csrf_exempt
 def menu_sections(request, user_id):
@@ -499,3 +497,125 @@ def foods_details(request, id):
         })
     return render(request, 'user_details.html', {'food': food})
 
+@csrf_exempt
+def Restaurants(request, user_id):
+   user = get_object_or_404(CustomUser, id=user_id)
+   restaurants = Restaurant.objects.filter(owner=user)
+   menus = Menu.objects.filter(restaurant__in=restaurants).distinct()
+   menu_sections = Menu_Section.objects.all() 
+   food_allergens = Food_Allergen.objects.all()
+   foods = Food.objects.all()
+
+
+   # if request.method == 'POST':
+   #    data = request.POST
+   #    allergyname = data.get('allergyname')
+   #    test_level = data.get('test_level')
+   #    category = data.get('category')
+
+   #    new_allergy = Allergy.objects.create(
+   #    allergyname=allergyname,
+   #    test_level=test_level,
+   #    category=category,
+   #  )
+   #    user.allergies.add(new_allergy)
+
+   #    return redirect('user_details', user_id=user.id)
+
+
+   if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            name = data.get('name')
+            allergen_ids = data.get('allergies', [])
+            section_id = data.get('section')
+
+            if not name or not section_id:
+                return JsonResponse({'error': 'name and section are needed buckaroo'}, status=400)
+            
+            section = get_object_or_404(Menu_Section, id=section_id)
+            new_food = Food.objects.create(name=name, section=section)
+            new_food.allergies.set(Allergy.objects.filter(id__in=allergen_ids))
+            new_food.save()
+
+            return JsonResponse({'status': 'created', 'food_id': new_food.id}, status=201)
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON'}, status=400)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+
+   search_query = request.GET.get('search')
+   if search_query:
+       foods = foods.filter(name__icontains=search_query)
+
+
+   context = {
+        'menus': menus,
+        'myuser': user,
+        'menu_sections': menu_sections,
+        'food_allergens': food_allergens,
+        'foods': foods
+
+    }
+   
+   return render(request, 'user_details.html', context)
+
+def restaurants(request, id):
+  food = get_object_or_404(Food, id=id)
+  food.delete()
+  return redirect(request.META.get('HTTP_REFERER', 'foods'))
+    
+
+def update_restaurant(request, id):
+    food = get_object_or_404(Food, id=id)
+    section = food.section
+    restaurant = section.menu_set.first().restaurant if section.menu_set.exists() else None
+    user = restaurant.owner if restaurant else None
+    
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        section_id = request.POST.get('section')
+        allergen_ids = request.POST.getlist('allergies')
+        if name:
+            food.name = name
+
+        if section_id:
+            new_section = get_object_or_404(Menu_Section, id=section_id)
+            food.section = new_section
+
+        if allergen_ids:
+            food.allergies.set(Allergy.objects.filter(id__in=allergen_ids))
+
+        food.save()
+        return redirect('user_details', user_id=user.id if user else None)
+
+    menu_sections = restaurant.menu_sections.all() if restaurant else Menu_Section.objects.none()
+    food_allergens = Food_Allergen.objects.all()
+    return render(request, 'user_details.html', {
+        'myuser': user,
+        'menu_sections': menu_sections,
+        'food_allergens': food_allergens,
+        'selected_food': food
+    })
+    
+
+
+def restaurant_details(request, id):
+    food = get_object_or_404(Food, id=id)
+    section = food.section
+    restaurant = section.menu_set.first().restaurant if section.menu_set.exists() else None
+
+    if request.headers.get('Accept') == 'application/json' or request.GET.get('format') == 'json':
+        return JsonResponse({
+            'id': food.id,
+            'name': food.name,
+            'section': food.section.id if food.section else None,
+            'allergies': list(food.allergies.values_list('id', flat=True)),
+        })
+    return render(request, 'user_details.html', {'food': food})
+
+
+
+
+def main(request):
+  return render(request, 'user_details.html', {'myuser': request.user})

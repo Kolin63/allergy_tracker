@@ -660,6 +660,7 @@ class Restaurant(models.Model):
     description = models.CharField(max_length=500, null = True)
     phone_number= models.CharField(max_length=15 , null = True)
     owner = models.ForeignKey(CustomUser, on_delete=models.CASCADE, limit_choices_to={'role': 'restaurant'}, null = True)
+    menu = models.ForeignKey('Menu', on_delete=models.CASCADE, null=True, related_name='restaurant')
     def __str__(self):
         return self.name
 class Menu_Section(models.Model):
