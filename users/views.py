@@ -527,16 +527,26 @@ def Restaurants(request, user_id):
         try:
             data = json.loads(request.body)
             name = data.get('name')
-            allergen_ids = data.get('allergies', [])
+            location = data.get('location')
+            description = data.get('description')
+            phone_number = data.get('phone_number')
+            owner = data.get('owner')
             section_id = data.get('section')
+            allergen_ids = data.get('allergies', [])
 
-            if not name or not section_id:
-                return JsonResponse({'error': 'name and section are needed buckaroo'}, status=400)
-            
-            section = get_object_or_404(Menu_Section, id=section_id)
-            new_food = Food.objects.create(name=name, section=section)
-            new_food.allergies.set(Allergy.objects.filter(id__in=allergen_ids))
-            new_food.save()
+            if not name or not location or not owner:
+                return JsonResponse({'error': 'name, location, and owner are needed buckaroo'}, status=400)
+
+            senw_restauranbt = Restaurant.objects.create(
+                name=name,
+                location=location,
+                description=description,
+                phone_number=phone_number,
+                owner_id=owner
+            )
+            if section_id:
+                new_section = get_object_or_404(Menu_Section, id=section_id)
+                senw_restauranbt.menu_sections.add(new_section)
 
             return JsonResponse({'status': 'created', 'food_id': new_food.id}, status=201)
         except json.JSONDecodeError:
@@ -546,7 +556,7 @@ def Restaurants(request, user_id):
 
    search_query = request.GET.get('search')
    if search_query:
-       foods = foods.filter(name__icontains=search_query)
+       restaurants = restaurants.filter(name__icontains=search_query)
 
 
    context = {
@@ -554,13 +564,14 @@ def Restaurants(request, user_id):
         'myuser': user,
         'menu_sections': menu_sections,
         'food_allergens': food_allergens,
-        'foods': foods
+        'foods': foods,
+        'restaurants': restaurants
 
     }
    
    return render(request, 'user_details.html', context)
 
-def restaurants(request, id):
+def delete_restaurants(request, id):
   food = get_object_or_404(Food, id=id)
   food.delete()
   return redirect(request.META.get('HTTP_REFERER', 'foods'))
