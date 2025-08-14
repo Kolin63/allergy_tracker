@@ -2,7 +2,6 @@ from django.template import loader
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from urllib3 import request
-from .models import CustomUser
 from django.conf import settings
 from django.urls import reverse
 from urllib.parse import quote_plus, urlencode
@@ -13,10 +12,15 @@ from .models import Food, Food_Allergen, Allergy
 from .models import CustomUser, Restaurant, Menu, Menu_Section
 
 
-
-from .models import Menu, Restaurant, Menu_Section
+from .models import CustomUser, Restaurant, Menu, Menu_Section, Food, Food_Allergen, Allergy
 
 # Create your views here.
+
+#---------------
+#Users
+#---------------
+
+
 def users(request):
     myusers = CustomUser.objects.all().values()
     template = loader.get_template('all_users.html')
@@ -81,6 +85,10 @@ def index(request):
         },
     )
 
+#---------------
+#Menus
+#---------------
+
 @csrf_exempt
 def menus(request, user_id):
    user = get_object_or_404(CustomUser, id=user_id)
@@ -113,7 +121,7 @@ def menus(request, user_id):
             restaurant_id = data.get('restaurant')
             section_ids = data.get('sections', [])
 
-            restaurant = Restaurant.objects.get(id=restaurant_id)
+            restaurant = get_object_or_404(Restaurant, id=restaurant_id)
             new_menu = Menu.objects.create(name=name)
             new_menu.sections.set(Menu_Section.objects.filter(id__in=section_ids))
             new_menu.restaurant = restaurant
