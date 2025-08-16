@@ -658,4 +658,6 @@ def main(request):
 
 #create login/signup
 #create home view -what the users see when they first login,
+#IF YOU CAN:
+#User setting/ pref modal
 
