@@ -651,3 +651,11 @@ def restaurant_details(request, id):
 
 def main(request):
     return render(request, 'user_details.html', {'myuser': request.user});
+
+
+
+#Homework Week 8/16- Week 8/23
+
+#create login/signup
+#create home view -what the users see when they first login,
+
