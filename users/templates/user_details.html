@@ -6,7 +6,7 @@
 <head>
     <meta charset='utf-8'>
     <meta http-equiv='X-UA-Compatible' content='IE=edge'>
-    <title>Page Title</title>
+    <title>AllergyTracker</title>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
     <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
     <script src='main.js'></script>
@@ -32,7 +32,7 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <!-- Left-side nav links -->
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <button type="button" class="btn btn-primary me-3" data-bs-toggle="modal" data-bs-target="#createAccountModal">
+        <button type="button" class="btn btn-primary me-3" data-bs-toggle="modal" data-bs-target="#createAllergyModal">
             Create Allergy
         </button>
         <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#createAccountModal">
@@ -63,7 +63,7 @@
     <!-- First Card: Nuts -->
     <div class="col-md-3">
       <div class="card mb-3">
-        <img src="{% static 'images/nuts.jpg' %}" class="card-img-top" alt="Nuts">
+        <img src="{% static 'images/Nuts.jpg' %}" class="card-img-top" alt="Nuts">
         <div class="card-body">
           <h5 class="card-title">Nuts</h5>
           <span class="badge bg-danger">Severe</span>
@@ -92,8 +92,18 @@
         </div>
       </div>
     </div>
-  </div>
-</div>
+
+<!-- Fourth Card: Fish -->
+    <div class="col-md-3">
+      <div class="card mb-3">
+        <img src="{% static 'images/fish.jpg' %}" class="card-img-top" alt="Fish">
+        <div class="card-body">
+          <h5 class="card-title">Fish</h5>
+          <span class="badge bg-danger">Severe</span>
+        </div>
+      </div>
+    </div>
+
 
 
 
@@ -214,6 +224,58 @@
     </div>
   </div>
 </div>
+
+<!-- Create Allergy Modal -->
+<div class="modal fade" id="createAllergyModal" tabindex="-1" aria-labelledby="createAllergyModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h5 class="modal-title" id="createAllergyModalLabel">Add New Allergy</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      
+      <!-- Modal Body: Form -->
+      <div class="modal-body">
+        <form id="createAllergyForm" method="POST" ">
+          {% csrf_token %}
+
+          <!-- Allergy Dropdown -->
+          <div class="mb-3">
+            <label for="allergy_name" class="form-label">Allergy</label>
+            <select class="form-select" id="allergy_name" name="allergy_name" required>
+              <option value="">Select an allergy</option>
+              <option value="Nuts">Nuts</option>
+              <option value="Fish">Fish</option>
+              <option value="Dairy">Dairy</option>
+              <option value="Eggs">Eggs</option>
+              <option value="Gluten">Gluten</option>
+              <!-- Add more allergies as needed -->
+            </select>
+          </div>
+
+          <!-- Allergy Test Value -->
+          <div class="mb-3">
+            <label for="allergy_value" class="form-label">Allergy Test Value</label>
+            <input type="number" step="0.01" class="form-control" id="allergy_value" name="allergy_value" placeholder="Enter test value" required>
+          </div>
+
+        </form>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="submit" form="createAllergyForm" class="btn btn-primary">Add Allergy</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+
 
 
 
