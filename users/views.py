@@ -10,6 +10,7 @@ from authlib.integrations.django_client import OAuth
 from django.views.decorators.csrf import csrf_exempt
 from .models import Food, Food_Allergen, Allergy
 from .models import CustomUser, Restaurant, Menu, Menu_Section
+from django.conf import settings
 
 
 from .models import CustomUser, Restaurant, Menu, Menu_Section, Food, Food_Allergen, Allergy
@@ -26,6 +27,9 @@ def users(request):
     template = loader.get_template('all_users.html')
     context = {
         'myusers': myusers,
+        "AUTH0_DOMAIN": settings.AUTH0_DOMAIN,
+        "AUTH0_CLIENT_ID": settings.AUTH0_CLIENT_ID,
+        "AUTH0_CALLBACK_URL": settings.AUTH0_CALLBACK_URL,
     }
     return HttpResponse(template.render(context,request))
 
@@ -33,7 +37,10 @@ def details(request, id):
     myuser = CustomUser.objects.get(id=id)
     template = loader.get_template('user_details.html')
     context = {
-        'myuser':myuser
+        'myuser':myuser,
+        "AUTH0_DOMAIN": settings.AUTH0_DOMAIN,
+        "AUTH0_CLIENT_ID": settings.AUTH0_CLIENT_ID,
+        "AUTH0_CALLBACK_URL": settings.AUTH0_CALLBACK_URL,
     }
     return HttpResponse(template.render(context,request))
 
@@ -56,9 +63,11 @@ def login(request):
     )
 
 def callback(request):
+
+    print(request.session.items())  # Check if 'authlib_state' exists
     token = oauth.auth0.authorize_access_token(request)
     request.session["user"] = token
-    return redirect(request.build_absolute_uri(reverse("index")))
+    return redirect(reverse("index"))
 
 def logout(request):
     request.session.clear()
@@ -76,14 +85,35 @@ def logout(request):
 
 
 def index(request):
-    return render(
-        request,
-        "index.html",
-        context={
-            "session": request.session.get("user"),
-            "pretty": json.dumps(request.session.get("user"), indent=4),
-        },
-    )
+    user = request.user
+    restaurants = Restaurant.objects.filter(owner=user)
+    menus = Menu.objects.filter(restaurant__in=restaurants).distinct()
+    menu_sections = Menu_Section.objects.all()
+    food_allergens = Food_Allergen.objects.all()
+    foods = Food.objects.all()
+
+    context = {
+        'myuser': user,
+        'restaurants': restaurants,
+        'menus': menus,
+        'menu_sections': menu_sections,
+        'food_allergens': food_allergens,
+        'foods': foods,
+
+        "AUTH0_DOMAIN": settings.AUTH0_DOMAIN,
+        "AUTH0_CLIENT_ID": settings.AUTH0_CLIENT_ID,
+        "AUTH0_CALLBACK_URL": settings.AUTH0_CALLBACK_URL,
+    }
+
+    return render(request, 'user_details.html', context)
+
+
+def test_session(request):
+    # Set a value in the session
+    request.session['foo'] = 'bar'
+    # Return the value from the session
+    return HttpResponse(f"Session value: {request.session.get('foo', 'missing')}")
+
 
 #---------------
 #Menus
@@ -140,7 +170,10 @@ def menus(request, user_id):
 
    context = {
         'menus': menus,
-        'myuser': user
+        'myuser': user,
+        "AUTH0_DOMAIN": settings.AUTH0_DOMAIN,
+        "AUTH0_CLIENT_ID": settings.AUTH0_CLIENT_ID,
+        "AUTH0_CALLBACK_URL": settings.AUTH0_CALLBACK_URL,
     }
    
    return render(request, 'user_details.html', context)
@@ -193,6 +226,9 @@ def menu_details(request, id):
             'name': menu.name,
             'restaurant': menu.restaurant.id if menu.restaurant else None,
             'sections': list(menu.sections.values_list('id', flat=True)),
+            "AUTH0_DOMAIN": settings.AUTH0_DOMAIN,
+            "AUTH0_CLIENT_ID": settings.AUTH0_CLIENT_ID,
+            "AUTH0_CALLBACK_URL": settings.AUTH0_CALLBACK_URL,
         })
     return render(request, 'user_details.html', {'mymenu': menu})
 
@@ -251,7 +287,10 @@ def menu_sections(request, user_id):
    context = {
         'menus': menus,
         'myuser': user,
-        'menu_sections': menu_sections
+        'menu_sections': menu_sections,
+        "AUTH0_DOMAIN": settings.AUTH0_DOMAIN,
+        "AUTH0_CLIENT_ID": settings.AUTH0_CLIENT_ID,
+        "AUTH0_CALLBACK_URL": settings.AUTH0_CALLBACK_URL,
     }
    
    return render(request, 'user_details.html', context)
@@ -315,6 +354,9 @@ def menu_section_details(request, id):
             'title': menu_section.title,
             'restaurant': menu_section.restaurant.id if menu_section.restaurant else None,
             'sections': list(menu_section.sections.values_list('id', flat=True)),
+            "AUTH0_DOMAIN": settings.AUTH0_DOMAIN,
+            "AUTH0_CLIENT_ID": settings.AUTH0_CLIENT_ID,
+            "AUTH0_CALLBACK_URL": settings.AUTH0_CALLBACK_URL,
         })
     return render(request, 'user_details.html', {'menu_section': menu_section})
 @csrf_exempt
@@ -342,6 +384,9 @@ def food_allergens(request, food_allergen_id):
 
    context = {
         'food_allergens': food_allergens,
+        "AUTH0_DOMAIN": settings.AUTH0_DOMAIN,
+        "AUTH0_CLIENT_ID": settings.AUTH0_CLIENT_ID,
+        "AUTH0_CALLBACK_URL": settings.AUTH0_CALLBACK_URL,
     }
    
    return render(request, 'user_details.html', context)
@@ -385,6 +430,9 @@ def food_allergen_details(request, id):
         return JsonResponse({
             'allergen': food_allergen.allergen,
             'id': food_allergen.id,
+            "AUTH0_DOMAIN": settings.AUTH0_DOMAIN,
+            "AUTH0_CLIENT_ID": settings.AUTH0_CLIENT_ID,
+            "AUTH0_CALLBACK_URL": settings.AUTH0_CALLBACK_URL,
         })
     return render(request, 'user_details.html', {'food_allergen': food_allergen})
 
@@ -445,7 +493,10 @@ def Foods(request, user_id):
         'myuser': user,
         'menu_sections': menu_sections,
         'food_allergens': food_allergens,
-        'foods': foods
+        'foods': foods,
+        "AUTH0_DOMAIN": settings.AUTH0_DOMAIN, 
+        "AUTH0_CLIENT_ID": settings.AUTH0_CLIENT_ID,
+        "AUTH0_CALLBACK_URL": settings.AUTH0_CALLBACK_URL,
 
     }
    
@@ -502,6 +553,9 @@ def foods_details(request, id):
             'name': food.name,
             'section': food.section.id if food.section else None,
             'allergies': list(food.allergies.values_list('id', flat=True)),
+            "AUTH0_DOMAIN": settings.AUTH0_DOMAIN,
+            "AUTH0_CLIENT_ID": settings.AUTH0_CLIENT_ID,
+            "AUTH0_CALLBACK_URL": settings.AUTH0_CALLBACK_URL,
         })
     return render(request, 'user_details.html', {'food': food})
 
@@ -576,7 +630,10 @@ def Restaurants(request, user_id):
         'menu_sections': menu_sections,
         'food_allergens': food_allergens,
         'foods': foods,
-        'restaurants': restaurants
+        'restaurants': restaurants,
+        "AUTH0_DOMAIN": settings.AUTH0_DOMAIN, 
+        "AUTH0_CLIENT_ID": settings.AUTH0_CLIENT_ID,
+        "AUTH0_CALLBACK_URL": settings.AUTH0_CALLBACK_URL,
 
     }
    
@@ -642,6 +699,9 @@ def restaurant_details(request, id):
             'phone_number': restaurant.phone_number,
             'owner': owner.id if owner else None,
             'menu': restaurant.menu.id if restaurant.menu else None,
+            "AUTH0_DOMAIN": settings.AUTH0_DOMAIN,
+            "AUTH0_CLIENT_ID": settings.AUTH0_CLIENT_ID,
+            "AUTH0_CALLBACK_URL": settings.AUTH0_CALLBACK_URL,
         })
     return render(request, 'user_details.html', {
         'selected_restaurant': restaurant,
@@ -650,8 +710,12 @@ def restaurant_details(request, id):
 
 
 def main(request):
-    return render(request, 'user_details.html', {'myuser': request.user});
-
+    context = {
+        "AUTH0_DOMAIN": settings.AUTH0_DOMAIN,
+        "AUTH0_CLIENT_ID": settings.AUTH0_CLIENT_ID,
+        "AUTH0_CALLBACK_URL": settings.AUTH0_CALLBACK_URL,
+    }
+    return render(request, 'user_details.html', {'myuser': request.user, **context})
 
 
 #Homework Week 8/16- Week 8/23

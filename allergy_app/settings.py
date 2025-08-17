@@ -36,7 +36,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
 
 AUTH_USER_MODEL = 'users.CustomUser'
 # Application definition
@@ -144,4 +144,19 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # LOAD Auth0 application settings into memory
 AUTH0_DOMAIN = os.environ.get("AUTH0_DOMAIN")
 AUTH0_CLIENT_ID = os.environ.get("AUTH0_CLIENT_ID")
-AUTH0_CLIENT_SECRET = os.environ.get("AUTH0_CLIENT_SECRET")
+AUTH0_CLIENT_SECRET = os.getenv("AUTH0_CLIENT_SECRET")
+AUTH0_CALLBACK_URL = os.getenv("AUTH0_CALLBACK_URL")
+LOGOUT_REDIRECT_URL = os.getenv("AUTH0_LOGOUT_URL", "/")
+AUTH0_LOGIN_URL = os.getenv("AUTH0_LOGIN_URL")
+
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+
+SESSION_COOKIE_SAMESITE = 'None'
+CSRF_COOKIE_SECURE = False
+CSRF_COOKIE_SAMESITE = 'None'  # Lax is fine for CSRF
+
+
+
+

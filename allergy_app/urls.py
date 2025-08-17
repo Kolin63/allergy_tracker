@@ -24,5 +24,7 @@ urlpatterns = [
     path('allergies/', include('allergies.urls')),
     path('admin/', admin.site.urls),
     path('users/', include('users.urls')),
-    path('', TemplateView.as_view(template_name="user_details.html"), name='home')
+    path('', user_views.main, name='home'),
+    path('users/', include('users.urls')),
+    path('callback/', user_views.callback, name='callback'),
 ]

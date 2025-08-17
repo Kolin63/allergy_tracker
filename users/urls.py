@@ -3,8 +3,8 @@ from . import views
 
 urlpatterns = [
     # Main / index
-    path('', views.main, name='main'),
-    path('index/', views.index, name='index'),
+    path('', views.index, name='index'),
+
 
     # Auth
     path('login/', views.login, name='login'),
@@ -45,4 +45,6 @@ urlpatterns = [
     path('food_allergens/<int:id>/update/', views.update_food_allergen, name='update_food_allergen'),
     path('food_allergens/<int:id>/details/', views.food_allergen_details, name='food_allergen_details'),
     
+    # Test session
+    path('test_session/', views.test_session, name='test_session'),
 ]
