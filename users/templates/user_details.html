@@ -20,7 +20,7 @@
   <div class="container-fluid">
     <!-- Navbar brand -->
     <a class="navbar-brand" href="#">
-      <img src="{% static '/users/images/logo.png' %}" width="40" height="40" class="d-inline-block align-text-top">
+      <img src="{% static 'images/logo.png' %}" width="40" height="40" class="d-inline-block align-text-top">
     </a>
 
     <!-- Collapsible menu button (mobile) -->
@@ -129,7 +129,7 @@
       
       <!-- Modal Body: Form -->
       <div class="modal-body">
-        <form id="createAccountForm" method="POST" action="{% url 'create_account' %}">
+        <form id="createAccountForm" method="POST" ">
           {% csrf_token %}
           
           <div class="mb-3">
