@@ -62,9 +62,14 @@ def allergies(request, user_id):
 
 def delete_allergy(request, id):
    allergy = get_object_or_404(Allergy, id=id)
-   user = allergy.customuser_set.first()
-   user.allergies.remove(allergy)
-   return redirect('user_details', user_id=user.id)
+   if request.method == "DELETE":
+       try:
+           allergy = Allergy.objects.get(id=allergy.id)
+           allergy.delete()
+           return JsonResponse({"success": True})
+       except Allergy.DoesNotExist:
+            return JsonResponse({"error": "Allergy not found"}, status=404)
+   return JsonResponse({"error": "Invalid request"}, status=400)
 
 def update_allergy(request, id):
    allergy = get_object_or_404(Allergy, id=id)
@@ -100,6 +105,9 @@ def details(request, id):
         })
     
     return render(request, 'details.html', {'myallergy': allergy})
+
 def main(request):
-  template = loader.get_template('user_details.html')
-  return HttpResponse(template.render())
+    if not request.user.is_authenticated:
+        return redirect('login')  # or your login page
+    context = {'myuser': request.user}
+    return render(request, 'user_details.html', context)

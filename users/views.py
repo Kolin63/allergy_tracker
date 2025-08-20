@@ -64,7 +64,7 @@ def login(request):
 
 def callback(request):
 
-    print(request.session.items())  # Check if 'authlib_state' exists
+    print("Session contents:", request.session.items())  # Check if 'authlib_state' exists
     token = oauth.auth0.authorize_access_token(request)
     request.session["user"] = token
     return redirect(reverse("index"))

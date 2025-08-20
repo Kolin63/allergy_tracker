@@ -36,7 +36,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", '8900f1747c32.ngrok-free.app']
 
 AUTH_USER_MODEL = 'users.CustomUser'
 # Application definition
@@ -149,14 +149,21 @@ AUTH0_CALLBACK_URL = os.getenv("AUTH0_CALLBACK_URL")
 LOGOUT_REDIRECT_URL = os.getenv("AUTH0_LOGOUT_URL", "/")
 AUTH0_LOGIN_URL = os.getenv("AUTH0_LOGIN_URL")
 
-SESSION_COOKIE_SECURE = False
-CSRF_COOKIE_SECURE = False
-SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+# For local development (HTTP on localhost)
+if 'ngrok' not in AUTH0_CALLBACK_URL:
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_SECURE = False
+    SESSION_COOKIE_SAMESITE = 'Lax'
+    CSRF_COOKIE_SAMESITE = 'Lax'
+else:
+    # For ngrok HTTPS
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SESSION_COOKIE_SAMESITE = 'None'
+    CSRF_COOKIE_SAMESITE = 'None'
 
-SESSION_COOKIE_SAMESITE = 'None'
-CSRF_COOKIE_SECURE = False
-CSRF_COOKIE_SAMESITE = 'None'  # Lax is fine for CSRF
-
-
+# If using ngrok or other proxies
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+USE_X_FORWARDED_HOST = True
 
 
