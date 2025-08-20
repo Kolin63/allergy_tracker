@@ -67,19 +67,21 @@
 <div class="container mt-4">
   <h3>My Allergies</h3>
   <div id="allergy-cards" class="row">
-    {% for allergy in myallergies %}
-      <div class="col-md-4 mb-3">
-        <div class="card shadow-sm">
-          <div class="card-body">
-            <h5 class="card-title">{{ allergy.allergyname }}</h5>
-            <p class="card-text">Category: {{ allergy.category }}</p>
-            <p class="card-text">Test Level: {{ allergy.test_level }}</p>
-          </div>
-        </div>
-      </div>
-    {% empty %}
-      <p class="text-muted">No allergies yet.</p>
-    {% endfor %}
+    {% for allergy in allergies %}
+      <div class="card mb-3">
+        <div class="card-body">
+          <h5 class="card-title">{{ allergy.allergyname }}</h5>
+          <p class="card-text">Category: {{ allergy.category }}</p>
+          <p class="card-text">
+            Test Level: {{ allergy.test_level }}
+            <span class="badge {{ allergy.severity_badge_class }}">
+                {{ allergy.severity }}
+            </span>
+    </p>
+  </div>
+</div>
+{% endfor %}
+
   </div>
 </div>
 
