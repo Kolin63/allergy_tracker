@@ -18,7 +18,7 @@ class Allergy(models.Model):
     allergyname = models.CharField(choices=ALLERGY_CHOICES, max_length=255, null=True)
 
     test_level = models.DecimalField(null=True, max_digits=10, decimal_places=2,)
-    category = models.CharField(max_length=255, null=True) 
+
 
     def severity(self):
         if self.test_level < 3.0:

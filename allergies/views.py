@@ -101,7 +101,6 @@ def details(request, id):
             'id': allergy.id,
             'allergyname': allergy.allergyname,
             'test_level': allergy.test_level,
-            'category': allergy.category,
         })
     
     return render(request, 'details.html', {'myallergy': allergy})

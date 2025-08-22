@@ -71,9 +71,8 @@
       <div class="card mb-3">
         <div class="card-body">
           <h5 class="card-title">{{ allergy.allergyname }}</h5>
-          <p class="card-text">Category: {{ allergy.category }}</p>
           <p class="card-text">
-            Test Level: {{ allergy.test_level }}
+            What Decimal Appeared on this allergy for your allergy test?: {{ allergy.test_level }}
             <span class="badge {{ allergy.severity_badge_class }}">
                 {{ allergy.severity }}
             </span>
