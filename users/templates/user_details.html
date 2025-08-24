@@ -95,11 +95,124 @@
 </div>
 
 
+<!-- Restaurant Modal -->
+<div class="modal fade" id="restaurantModal" tabindex="-1" aria-labelledby="restaurantModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      
+      <div class="modal-header">
+        <h5 class="modal-title" id="restaurantModalLabel">Create Restaurant</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
 
+      <div class="modal-body">
+        <!-- Tabs -->
+        <ul class="nav nav-tabs" id="restaurantTab" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="restaurant-tab" data-bs-toggle="tab" data-bs-target="#restaurant" type="button" role="tab">Restaurant</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="menu-tab" data-bs-toggle="tab" data-bs-target="#menu" type="button" role="tab">Menus</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="section-tab" data-bs-toggle="tab" data-bs-target="#section" type="button" role="tab">Menu Sections</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="food-tab" data-bs-toggle="tab" data-bs-target="#food" type="button" role="tab">Foods</button>
+          </li>
+        </ul>
 
+        <div class="tab-content mt-3">
+          <!-- Restaurant Form -->
+          <div class="tab-pane fade show active" id="restaurant" role="tabpanel">
+            <form id="restaurantForm">
+              <div class="mb-3">
+                <label class="form-label">Restaurant Name</label>
+                <input type="text" class="form-control" name="name" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Location</label>
+                <input type="text" class="form-control" name="location">
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Description</label>
+                <textarea class="form-control" name="description"></textarea>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Phone Number</label>
+                <input type="text" class="form-control" name="phone_number">
+              </div>
+            </form>
+          </div>
 
-    
+          <!-- Menu Form -->
+          <div class="tab-pane fade" id="menu" role="tabpanel">
+            <form id="menuForm">
+              <div class="mb-3">
+                <label class="form-label">Menu Name</label>
+                <input type="text" class="form-control" name="menu_name">
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Assign Sections (multiple)</label>
+                <select multiple class="form-select" name="sections">
+                  <!-- Populate dynamically with existing sections -->
+                </select>
+              </div>
+            </form>
+          </div>
 
+          <!-- Menu Section Form -->
+          <div class="tab-pane fade" id="section" role="tabpanel">
+            <form id="sectionForm">
+              <div class="mb-3">
+                <label class="form-label">Section Title</label>
+                <input type="text" class="form-control" name="title">
+              </div>
+            </form>
+          </div>
+
+          <!-- Food Form -->
+          <div class="tab-pane fade" id="food" role="tabpanel">
+            <form id="foodForm">
+              <div class="mb-3">
+                <label class="form-label">Food Name</label>
+                <input type="text" class="form-control" name="food_name">
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Section</label>
+                <select class="form-select" name="food_section">
+                  <!-- Populate dynamically with Menu Sections -->
+                </select>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Allergens</label>
+                <select multiple class="form-select" name="allergies">
+                  <option value="milk">Milk</option>
+                  <option value="eggs">Eggs</option>
+                  <option value="shellfish">Shellfish</option>
+                  <option value="treenuts">Tree Nuts</option>
+                  <option value="peanuts">Peanuts</option>
+                  <option value="wheat">Wheat</option>
+                  <option value="soybeans">Soybeans</option>
+                  <option value="sesame">Sesame</option>
+                  <option value="fish">Fish</option>
+                </select>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary" form="restaurantForm">Save Restaurant</button>
+        <button type="submit" class="btn btn-success" form="menuForm">Save Menu</button>
+        <button type="submit" class="btn btn-info" form="sectionForm">Save Section</button>
+        <button type="submit" class="btn btn-warning" form="foodForm">Save Food</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 
 
@@ -152,52 +265,6 @@
   </div>
 </form>
 
-<!-- Restaurant Modal -->
-<div class="modal fade" id="restaurantModal" tabindex="-1" aria-labelledby="restaurantModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content rounded-3 shadow-lg">
-      <div class="modal-header bg-dark text-white">
-        <h5 class="modal-title" id="restaurantModalLabel">Add Restaurant</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      
-      <form id="restaurantForm">
-        <div class="modal-body">
-          
-          <!-- Name -->
-          <div class="mb-3">
-            <label for="restaurantName" class="form-label">Restaurant Name</label>
-            <input type="text" class="form-control" id="restaurantName" name="name" maxlength="255" required>
-          </div>
-          
-          <!-- Location -->
-          <div class="mb-3">
-            <label for="restaurantLocation" class="form-label">Location</label>
-            <input type="text" class="form-control" id="restaurantLocation" name="location" maxlength="255">
-          </div>
-          
-          <!-- Description -->
-          <div class="mb-3">
-            <label for="restaurantDescription" class="form-label">Description</label>
-            <textarea class="form-control" id="restaurantDescription" name="description" rows="3" maxlength="500"></textarea>
-          </div>
-          
-          <!-- Phone -->
-          <div class="mb-3">
-            <label for="restaurantPhone" class="form-label">Phone Number</label>
-            <input type="tel" class="form-control" id="restaurantPhone" name="phone_number" maxlength="15" placeholder="+1 555-123-4567">
-          </div>
-          
-        </div>
-        
-        <div class="modal-footer">
-          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-primary">Save Restaurant</button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
 
 
 <script>
