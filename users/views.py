@@ -708,7 +708,6 @@ def restaurant_details(request, id):
         'myuser': owner,
     })
 
-
 def main(request):
     context = {
         "AUTH0_DOMAIN": settings.AUTH0_DOMAIN,
