@@ -21,7 +21,7 @@ AUTH0_CLIENT_SECRET = '5IOmBwNt5A4pyu6EMicFHT1w2ifscE0wZhQuaRs2HfWAee1SbjN_vW1o1
 AUTH0_DOMAIN = "ayandesai.us.auth0.com"
 AUTH0_CALLBACK_URL = "https://cautious-goldfish-g479577v4596f9xv4-8000.app.github.dev/callback/"
 LOGIN_URL = "https://cautious-goldfish-g479577v4596f9xv4-8000.app.github.dev/login/"
-LOGIN_REDIRECT_URL = 'AUTH0_CALLBACK_URL=https://cautious-goldfish-g479577v4596f9xv4-8000.app.github.dev/callback/'
+LOGIN_REDIRECT_URL = 'https://cautious-goldfish-g479577v4596f9xv4-8000.app.github.dev/callback/'
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 TEMPLATE_DIR = os.path.join(BASE_DIR, "allergy_app", "templates")
