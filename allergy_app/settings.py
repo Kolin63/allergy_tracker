@@ -19,8 +19,8 @@ load_dotenv()
 AUTH0_CLIENT_ID = "s2WDwHswxn3UYbsmpzsOgGvC2i3i5zyn"
 AUTH0_CLIENT_SECRET = '5IOmBwNt5A4pyu6EMicFHT1w2ifscE0wZhQuaRs2HfWAee1SbjN_vW1o1G2rUc'
 AUTH0_DOMAIN = "ayandesai.us.auth0.com"
-AUTH0_CALLBACK_URL = "http://127.0.0.1:8000/callback/"
-LOGIN_URL = "http://127.0.0.1:8000/login/"
+AUTH0_CALLBACK_URL = "https://cautious-goldfish-g479577v4596f9xv4-8000.app.github.dev/callback/"
+LOGIN_URL = "https://cautious-goldfish-g479577v4596f9xv4-8000.app.github.dev/login/"
 LOGIN_REDIRECT_URL = '/'
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -145,9 +145,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH0_DOMAIN = "ayandesai.us.auth0.com"
 AUTH0_CLIENT_ID = "s2WDwHswxn3UYbsmpzsOgGvC2i3i5zyn"
 AUTH0_CLIENT_SECRET = 'django-insecure-&rup@(8(3u@h#x6aqt#k(^6mdc9-=qjzo$caytm-k=jzdhoube'
-AUTH0_CALLBACK_URL = "http://127.0.0.1:8000/callback/"
-LOGOUT_REDIRECT_URL = "http://127.0.0.1:8000/logout/"
-AUTH0_LOGIN_URL = "http://127.0.0.1:8000/login/"
+AUTH0_CALLBACK_URL = "https://cautious-goldfish-g479577v4596f9xv4-8000.app.github.dev/callback/"
+LOGOUT_REDIRECT_URL = "https://cautious-goldfish-g479577v4596f9xv4-8000.app.github.dev/logout/"
+AUTH0_LOGIN_URL = "https://cautious-goldfish-g479577v4596f9xv4-8000.app.github.dev/login/"
 
 # For local development (HTTP on localhost)
 if 'ngrok' not in AUTH0_CALLBACK_URL:
