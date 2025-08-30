@@ -17,7 +17,7 @@ from dotenv import load_dotenv, find_dotenv
 load_dotenv()
 
 AUTH0_CLIENT_ID = "s2WDwHswxn3UYbsmpzsOgGvC2i3i5zyn"
-AUTH0_CLIENT_SECRET = echo $AUTH0_CLIENT_SECRET
+AUTH0_CLIENT_SECRET = os.getenv(AUTH0_CLIENT_SECRET)
 AUTH0_DOMAIN = "ayandesai.us.auth0.com"
 AUTH0_CALLBACK_URL = "http://127.0.0.1:8000/callback/"
 LOGIN_URL = "http://127.0.0.1:8000/login/"
@@ -31,7 +31,7 @@ TEMPLATE_DIR = os.path.join(BASE_DIR, "allergy_app", "templates")
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = cho $SECRET_KEY 
+SECRET_KEY = os.getenv(SECRET_KEY)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -144,7 +144,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # LOAD Auth0 application settings into memory
 AUTH0_DOMAIN = "ayandesai.us.auth0.com"
 AUTH0_CLIENT_ID = "s2WDwHswxn3UYbsmpzsOgGvC2i3i5zyn"
-AUTH0_CLIENT_SECRET = echo $AUTH0_CLIENT_SECRET
+AUTH0_CLIENT_SECRET = os.getenv(AUTH0_CLIENT_SECRET)
 AUTH0_CALLBACK_URL = "http://127.0.0.1:8000/callback/"
 LOGOUT_REDIRECT_URL = "http://127.0.0.1:8000/logout/"
 AUTH0_LOGIN_URL = "http://127.0.0.1:8000/login/"
