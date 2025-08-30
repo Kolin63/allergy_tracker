@@ -36,7 +36,7 @@ SECRET_KEY = 'django-insecure-&rup@(8(3u@h#x6aqt#k(^6mdc9-=qjzo$caytm-k=jzdhoube
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", '8900f1747c32.ngrok-free.app']
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", '8900f1747c32.ngrok-free.app', 'cautious-goldfish-g479577v4596f9xv4-8000.app.github.dev']
 
 AUTH_USER_MODEL = 'users.CustomUser'
 # Application definition
