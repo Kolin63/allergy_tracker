@@ -16,11 +16,11 @@ import os
 from dotenv import load_dotenv, find_dotenv
 load_dotenv()
 
-AUTH0_CLIENT_ID = os.getenv("AUTH0_CLIENT_ID")
-AUTH0_CLIENT_SECRET = os.getenv("AUTH0_CLIENT_SECRET")
-AUTH0_DOMAIN = os.getenv("AUTH0_DOMAIN")
-AUTH0_CALLBACK_URL = os.getenv("AUTH0_CALLBACK_URL")
-LOGIN_URL = '/login/'
+AUTH0_CLIENT_ID = "s2WDwHswxn3UYbsmpzsOgGvC2i3i5zyn"
+AUTH0_CLIENT_SECRET = echo $AUTH0_CLIENT_SECRET
+AUTH0_DOMAIN = "ayandesai.us.auth0.com"
+AUTH0_CALLBACK_URL = "http://127.0.0.1:8000/callback/"
+LOGIN_URL = "http://127.0.0.1:8000/login/"
 LOGIN_REDIRECT_URL = '/'
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -31,7 +31,7 @@ TEMPLATE_DIR = os.path.join(BASE_DIR, "allergy_app", "templates")
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv("SECRET_KEY")
+SECRET_KEY = cho $SECRET_KEY 
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -142,12 +142,12 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # LOAD Auth0 application settings into memory
-AUTH0_DOMAIN = os.environ.get("AUTH0_DOMAIN")
-AUTH0_CLIENT_ID = os.environ.get("AUTH0_CLIENT_ID")
-AUTH0_CLIENT_SECRET = os.getenv("AUTH0_CLIENT_SECRET")
-AUTH0_CALLBACK_URL = os.getenv("AUTH0_CALLBACK_URL")
-LOGOUT_REDIRECT_URL = os.getenv("AUTH0_LOGOUT_URL", "/")
-AUTH0_LOGIN_URL = os.getenv("AUTH0_LOGIN_URL")
+AUTH0_DOMAIN = "ayandesai.us.auth0.com"
+AUTH0_CLIENT_ID = "s2WDwHswxn3UYbsmpzsOgGvC2i3i5zyn"
+AUTH0_CLIENT_SECRET = echo $AUTH0_CLIENT_SECRET
+AUTH0_CALLBACK_URL = "http://127.0.0.1:8000/callback/"
+LOGOUT_REDIRECT_URL = "http://127.0.0.1:8000/logout/"
+AUTH0_LOGIN_URL = "http://127.0.0.1:8000/login/"
 
 # For local development (HTTP on localhost)
 if 'ngrok' not in AUTH0_CALLBACK_URL:
