@@ -17,7 +17,7 @@ from dotenv import load_dotenv, find_dotenv
 load_dotenv()
 
 AUTH0_CLIENT_ID = "s2WDwHswxn3UYbsmpzsOgGvC2i3i5zyn"
-AUTH0_CLIENT_SECRET = '5IOmBwNt5A4pyu6EMicFHT1w2ifscE0wZhQuaRs2HfWAee1SbjN_vW1o1G2rUc'
+AUTH0_CLIENT_SECRET = '5IOmBwNt5A4pyu6EMicFHT1w2ifscE0wZhQuaRs2HfWAee1SbjN_vW1o1G2rUca9'
 AUTH0_DOMAIN = "ayandesai.us.auth0.com"
 AUTH0_CALLBACK_URL = "https://cautious-goldfish-g479577v4596f9xv4-8000.app.github.dev/callback/"
 LOGIN_URL = "https://cautious-goldfish-g479577v4596f9xv4-8000.app.github.dev/login/"
@@ -148,26 +148,30 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # LOAD Auth0 application settings into memory
 AUTH0_DOMAIN = "ayandesai.us.auth0.com"
 AUTH0_CLIENT_ID = "s2WDwHswxn3UYbsmpzsOgGvC2i3i5zyn"
-AUTH0_CLIENT_SECRET = 'django-insecure-&rup@(8(3u@h#x6aqt#k(^6mdc9-=qjzo$caytm-k=jzdhoube'
+AUTH0_CLIENT_SECRET = '5IOmBwNt5A4pyu6EMicFHT1w2ifscE0wZhQuaRs2HfWAee1SbjN_vW1o1G2rUca9'
 AUTH0_CALLBACK_URL = "https://cautious-goldfish-g479577v4596f9xv4-8000.app.github.dev/callback/"
 LOGOUT_REDIRECT_URL = "https://cautious-goldfish-g479577v4596f9xv4-8000.app.github.dev/logout/"
 AUTH0_LOGIN_URL = "https://cautious-goldfish-g479577v4596f9xv4-8000.app.github.dev/login/"
 
-# For local development (HTTP on localhost)
-if 'ngrok' not in AUTH0_CALLBACK_URL:
-    SESSION_COOKIE_SECURE = False
-    CSRF_COOKIE_SECURE = False
-    SESSION_COOKIE_SAMESITE = 'Lax'
-    CSRF_COOKIE_SAMESITE = 'Lax'
-else:
-    # For ngrok HTTPS
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
-    SESSION_COOKIE_SAMESITE = 'None'
-    CSRF_COOKIE_SAMESITE = 'None'
+DEBUG = True
 
-# If using ngrok or other proxies
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-USE_X_FORWARDED_HOST = True
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False
+SESSION_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_SAMESITE = 'Lax'
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+    "https://cautious-goldfish-g479577v4596f9xv4-8000.app.github.dev",
+    "https://8900f1747c32.ngrok-free.app",
+]
+
+# If using HTTPS on ngrok:
+# SESSION_COOKIE_SECURE = True
+# CSRF_COOKIE_SECURE = True
+# SESSION_COOKIE_SAMESITE = 'None'
+# CSRF_COOKIE_SAMESITE = 'None'
+
 
 
