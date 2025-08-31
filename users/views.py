@@ -67,7 +67,7 @@ def callback(request):
     print("Session contents:", request.session.items())  # Check if 'authlib_state' exists
     token = oauth.auth0.authorize_access_token(request)
     request.session["user"] = token
-    return redirect(reverse("index"))
+    return redirect(request.build_absolute_uri(reverse("index")))
 
 def logout(request):
     request.session.clear()
