@@ -46,5 +46,5 @@ urlpatterns = [
     path('food_allergens/<int:id>/details/', views.food_allergen_details, name='food_allergen_details'),
     
     # Test session
-    path('test_session/', views.test_session, name='test_session'),
+    path('test-session/', views.test_session, name='test_session'),
 ]

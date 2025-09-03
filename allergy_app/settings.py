@@ -20,7 +20,7 @@ AUTH0_CLIENT_ID = "s2WDwHswxn3UYbsmpzsOgGvC2i3i5zyn"
 AUTH0_CLIENT_SECRET = '5IOmBwNt5A4pyu6EMicFHT1w2ifscE0wZhQuaRs2HfWAee1SbjN_vW1o1G2rUca9'
 AUTH0_DOMAIN = "ayandesai.us.auth0.com"
 AUTH0_CALLBACK_URL = "https://cautious-goldfish-g479577v4596f9xv4-8000.app.github.dev/callback/"
-LOGIN_URL = "https://cautious-goldfish-g479577v4596f9xv4-8000.app.github.dev/login/"
+LOGIN_URL = "/login/"
 LOGIN_REDIRECT_URL = '/'
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -155,16 +155,18 @@ AUTH0_LOGIN_URL = "https://cautious-goldfish-g479577v4596f9xv4-8000.app.github.d
 
 DEBUG = True
 
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+
+
 SESSION_COOKIE_SECURE = False
 CSRF_COOKIE_SECURE = False
-SESSION_COOKIE_SAMESITE = 'Lax'
-CSRF_COOKIE_SAMESITE = 'Lax'
+SESSION_COOKIE_SAMESITE = 'None'
+CSRF_COOKIE_SAMESITE = 'None'
 
 CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:8000",
-    "http://127.0.0.1:8000",
+
     "https://cautious-goldfish-g479577v4596f9xv4-8000.app.github.dev",
-    "https://8900f1747c32.ngrok-free.app",
+
 ]
 
 # If using HTTPS on ngrok:
