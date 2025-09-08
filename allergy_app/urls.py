@@ -22,8 +22,11 @@ from users import views as user_views
 
 urlpatterns = [
     path('allergies/', include('allergies.urls')),
+    path('login/', include('users.urls'), name = 'login'),
     path('admin/', admin.site.urls),
     path('users/', include('users.urls')),
     path('', user_views.main, name='home'),
     path('callback/', user_views.callback, name='callback'),
+    path('logout/', user_views.logout, name='logouy'),
+    
 ]

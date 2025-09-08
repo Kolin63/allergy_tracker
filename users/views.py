@@ -15,6 +15,7 @@ from authlib.integrations.django_client import OAuth
 from django.shortcuts import redirect
 from django.conf import settings
 from django.urls import reverse
+import requests
 
 
 from .models import CustomUser, Restaurant, Menu, Menu_Section, Food, Food_Allergen, Allergy
@@ -57,22 +58,47 @@ def details(request, id):
 
 
 def login(request):
-    return auth0.authorize_redirect(
-        request, request.build_absolute_uri(reverse("callback"))
-    )
+    print("Hola!")
+    return auth0.authorize_redirect(request, settings.AUTH0_CALLBACK_URL)
 
 @csrf_exempt
 def callback(request):
-    token = auth0.authorize_access_token(request)  # same auth0 object
-    userinfo = auth0.parse_id_token(request, token)
+    print("Hello!")
+    code = request.GET.get("code")
+    token_url = f"https://{settings.AUTH0_DOMAIN}/oauth/token"
 
-    request.session['user'] = {
-        'id': userinfo['sub'],
-        'name': userinfo['name'],
-        'email': userinfo['email'],
+    # Exchange code for tokens
+    token_data = {
+        "grant_type": "authorization_code",
+        "client_id": settings.AUTH0_CLIENT_ID,
+        "client_secret": settings.AUTH0_CLIENT_SECRET,
+        "code": code,
+        "redirect_uri": settings.AUTH0_CALLBACK_URL,
     }
 
-    return redirect('/')
+    # ✅ Use requests.post instead of request.post
+    token_res = requests.post(token_url, json=token_data).json()
+
+    user_url = f"https://{settings.AUTH0_DOMAIN}/userinfo"
+    # ✅ Use requests.get instead of request.get
+    user_info = requests.get(
+        user_url,
+        headers={"Authorization": f"Bearer {token_res['access_token']}"}
+    ).json()
+
+    # Use email to check DB
+    email = user_info.get("email")
+    user, created = CustomUser.objects.get_or_create(
+        email=email,
+        defaults={
+            "username": user_info.get("name", email.split("@")[0]),
+        }
+    )
+
+    # Attach to Django session
+    request.session["user"] = user_info
+
+    return redirect("/")
 
 
 def logout(request):
@@ -113,7 +139,7 @@ def index(request):
         restaurants = Menu.objects.none()
         menus = Menu.objects.none()
 
-    menu_sections = Menu_Section.objects.filter(menu__in=menus)
+    # menu_sections = Menu_Section.objects.filter(menu__in=menus)
     foods = Food.objects.filter(menu_section__in=menu_sections)
     food_allergens = Food_Allergen.objects.filter(food__in=foods)
 
@@ -121,7 +147,7 @@ def index(request):
         "myuser": user,
         "restaurants": restaurants,
         "menus": menus,
-        "menu_sections": menu_sections,
+        # "menu_sections": menu_sections,
         "foods": foods,
         "food_allergens": food_allergens,
         "AUTH0_DOMAIN": settings.AUTH0_DOMAIN,
