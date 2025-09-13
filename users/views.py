@@ -59,15 +59,30 @@ def details(request, id):
 
 def login(request):
     print("Hola!")
-    return auth0.authorize_redirect(request, settings.AUTH0_CALLBACK_URL)
+    base_url = f"https://{settings.AUTH0_DOMAIN}/authorize"
+
+    params = {
+        "response_type": "code",
+        "client_id": settings.AUTH0_CLIENT_ID,
+        "redirect_uri": settings.AUTH0_CALLBACK_URL,
+        "scope": "openid profile email",
+    }
+
+    # If ?screen_hint=signup is passed, include it
+    screen_hint = request.GET.get("screen_hint")
+    if screen_hint:
+        params["screen_hint"] = screen_hint
+
+    # Build final URL
+    auth_url = f"{base_url}?{urlencode(params)}"
+    return redirect(auth_url)
 
 @csrf_exempt
 def callback(request):
-    print("Hello!")
+    print("Hello!")  # confirm Auth0 redirected back
     code = request.GET.get("code")
     token_url = f"https://{settings.AUTH0_DOMAIN}/oauth/token"
 
-    # Exchange code for tokens
     token_data = {
         "grant_type": "authorization_code",
         "client_id": settings.AUTH0_CLIENT_ID,
@@ -76,26 +91,15 @@ def callback(request):
         "redirect_uri": settings.AUTH0_CALLBACK_URL,
     }
 
-    # ✅ Use requests.post instead of request.post
     token_res = requests.post(token_url, json=token_data).json()
 
     user_url = f"https://{settings.AUTH0_DOMAIN}/userinfo"
-    # ✅ Use requests.get instead of request.get
     user_info = requests.get(
         user_url,
         headers={"Authorization": f"Bearer {token_res['access_token']}"}
     ).json()
 
-    # Use email to check DB
-    email = user_info.get("email")
-    user, created = CustomUser.objects.get_or_create(
-        email=email,
-        defaults={
-            "username": user_info.get("name", email.split("@")[0]),
-        }
-    )
-
-    # Attach to Django session
+    # Store user info in session
     request.session["user"] = user_info
 
     return redirect("/")
