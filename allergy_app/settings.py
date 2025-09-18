@@ -19,7 +19,7 @@ load_dotenv()
 AUTH0_CLIENT_ID = "s2WDwHswxn3UYbsmpzsOgGvC2i3i5zyn"
 AUTH0_CLIENT_SECRET = '5IOmBwNt5A4pyu6EMicFHT1w2ifscE0wZhQuaRs2HfWAee1SbjN_vW1o1G2rUca9'
 AUTH0_DOMAIN = "ayandesai.us.auth0.com"
-AUTH0_CALLBACK_URL = "https://cautious-goldfish-g479577v4596f9xv4-8000.app.github.dev/callback/"
+AUTH0_CALLBACK_URL = "https://fictional-space-system-q7pr9pp57694fqww-8000.github.dev/callback/"
 LOGIN_URL = "/login/"
 LOGIN_REDIRECT_URL = '/'
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -36,7 +36,7 @@ SECRET_KEY = 'django-insecure-&rup@(8(3u@h#x6aqt#k(^6mdc9-=qjzo$caytm-k=jzdhoube
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", '8900f1747c32.ngrok-free.app', 'cautious-goldfish-g479577v4596f9xv4-8000.app.github.dev']
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", '8900f1747c32.ngrok-free.app', 'fictional-space-system-q7pr9pp57694fqww-8000.app.github.dev']
 
 AUTH_USER_MODEL = 'users.CustomUser'
 # Application definition
@@ -114,7 +114,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://cautious-goldfish-g479577v4596f9xv4-8000.app.github.dev"
+    "https://fictional-space-system-q7pr9pp57694fqww-8000.app.github.dev/"
 ]
 
 
@@ -149,9 +149,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH0_DOMAIN = "ayandesai.us.auth0.com"
 AUTH0_CLIENT_ID = "s2WDwHswxn3UYbsmpzsOgGvC2i3i5zyn"
 AUTH0_CLIENT_SECRET = '5IOmBwNt5A4pyu6EMicFHT1w2ifscE0wZhQuaRs2HfWAee1SbjN_vW1o1G2rUca9'
-AUTH0_CALLBACK_URL = "https://cautious-goldfish-g479577v4596f9xv4-8000.app.github.dev/callback/"
-LOGOUT_REDIRECT_URL = "https://cautious-goldfish-g479577v4596f9xv4-8000.app.github.dev/logout/"
-AUTH0_LOGIN_URL = "https://cautious-goldfish-g479577v4596f9xv4-8000.app.github.dev/login/"
+AUTH0_CALLBACK_URL = "https://fictional-space-system-q7pr9pp57694fqww-8000.app.github.dev/callback/"
+LOGOUT_REDIRECT_URL = "fictional-space-system-q7pr9pp57694fqww-8000.app.github.dev/logout/"
+AUTH0_LOGIN_URL = "fictional-space-system-q7pr9pp57694fqww-8000.app.github.dev/login/"
 
 DEBUG = True
 
@@ -165,7 +165,7 @@ CSRF_COOKIE_SAMESITE = 'None'
 
 CSRF_TRUSTED_ORIGINS = [
 
-    "https://cautious-goldfish-g479577v4596f9xv4-8000.app.github.dev",
+    "https://fictional-space-system-q7pr9pp57694fqww-8000.app.github.dev/",
 
 ]
 
