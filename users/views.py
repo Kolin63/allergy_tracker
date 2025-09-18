@@ -125,12 +125,15 @@ def index(request):
             email=email,
             defaults={
                 "username": user_session.get("name", email.split("@")[0]),
+                'is_authenticated': True
                 # add other defaults if needed
             },
         )
     else:
         # fallback to authenticated user if using Django auth
         user = request.user if request.user.is_authenticated else None
+
+    user = "None"
 
     if user:
         restaurants = Restaurant.objects.filter(owner=user)
@@ -264,7 +267,7 @@ def update_menu(request, id):
         return redirect('user_details', user_id=user.id)
 
     
-    return render(request, 'user_details.html', {'myuser': user, 'menus': menus, 'selected_menu': menu})
+    return render(request, 'user_details.html', {'myuser2': user, 'menus': menus, 'selected_menu': menu})
 
 
 def menu_details(request, id):
@@ -763,7 +766,23 @@ def main(request):
         "AUTH0_CLIENT_ID": settings.AUTH0_CLIENT_ID,
         "AUTH0_CALLBACK_URL": settings.AUTH0_CALLBACK_URL,
     }
-    return render(request, 'user_details.html', {'myuser': request.user, **context})
+
+    user_session = request.session.get('user')
+
+    if user_session:
+        email = user_session.get('email')
+        user, created = CustomUser.objects.get_or_create(
+            email=email,
+            defaults={
+                "username": user_session.get("name", email.split("@")[0]),
+                'is_authenticated': True
+            },
+        )
+    else:
+        # fallback to authenticated user if using Django auth
+        user = request.user if request.user.is_authenticated else None
+
+    return render(request, 'user_details.html', {'myuser2': user, **context})
 
 
 #Homework Week 8/16- Week 8/23
