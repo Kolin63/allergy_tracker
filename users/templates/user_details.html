@@ -44,8 +44,6 @@
           <input class="form-control me-2" type="search" placeholder="Search for Restaurants..." aria-label="Search">
           <button class="btn btn-outline-success" type="submit">Search</button>
         </form>
-        
-        {{ myuser2 }}
 
         <!-- Buttons FAR right -->
         <div class="d-flex ms-auto">
@@ -90,7 +88,7 @@
         </div>
 
         <div class="modal-body">
-          {% if myuser.is_authenticated %}
+          {% if myuser2.is_authenticated %}
             <!-- Tabs -->
             <ul class="nav nav-tabs" id="restaurantTabs" role="tablist">
               <li class="nav-item" role="presentation">
@@ -192,7 +190,7 @@
         </div>
         
         <div class="modal-body">
-          {% if myuser.is_authenticated %}
+          {% if myuser2.is_authenticated %}
             <form id="createAllergyForm">
               {% csrf_token %}
               <div class="mb-3">

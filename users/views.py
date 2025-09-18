@@ -784,11 +784,4 @@ def main(request):
 
     return render(request, 'user_details.html', {'myuser2': user, **context})
 
-
-#Homework Week 8/16- Week 8/23
-
-#create login/signup
-#create home view -what the users see when they first login,
-#IF YOU CAN:
-#User setting/ pref modal
-
+#Make sure is_authentricated crosses over with user_details
