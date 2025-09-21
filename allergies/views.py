@@ -32,33 +32,38 @@ def allergies(request, user_id):
 
    #    return redirect('user_details', user_id=user.id)
    if request.method == 'POST':
-      try:
-         data = json.loads(request.body)
-         allergyname = data.get('allergyname')
-         test_level = data.get('test_level')
-         category = data.get('category')
+    try:
+        data = json.loads(request.body)
+        allergyname = data.get('allergyname')
+        test_level = data.get('test_level')
 
-         new_allergy = Allergy.objects.create(
+
+        new_allergy = Allergy.objects.create(
             allergyname=allergyname,
-            test_level=test_level,
-            category=category,
-            )
-         user.allergies.add(new_allergy)
+            test_level=float(test_level),
 
-         return JsonResponse({'status': 'created', 'allergy_id': new_allergy.id}, status=201)
+        )
+        user.allergies.add(new_allergy)
 
-      except json.JSONDecodeError:
-         return JsonResponse({'error': 'Invalid JSON'}, status=400)
+        # Safely get severity info
+        severity = getattr(new_allergy, 'severity', '')
+        badge_class = getattr(new_allergy, 'severity_badge_class', '')
+        if callable(badge_class):
+            badge_class = badge_class()
 
+        response_data = {
+            'status': 'created',
+            'allergy_id': new_allergy.id,
+            'allergyname': new_allergy.allergyname,
+            'test_level': new_allergy.test_level,
+            'severity': new_allergy.get_severity_display() if hasattr(new_allergy, 'get_severity_display') else '',
+            'severity_badge_class': new_allergy.severity_badge_class() if callable(new_allergy.severity_badge_class) else '',
+        }
+        return JsonResponse(response_data, status=201)
 
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
 
-   if request.GET.get('search'):
-      queryset = queryset.filter(allergyname__icontains=request.GET.get('search'))
-   
-   context = {
-      'myallergies':queryset, 'myuser':user
-   }   
-   return render(request, 'user_details.html', context)
 
 def delete_allergy(request, id):
    allergy = get_object_or_404(Allergy, id=id)
