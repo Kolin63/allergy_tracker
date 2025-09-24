@@ -65,16 +65,17 @@ def allergies(request, user_id):
         return JsonResponse({'error': 'Invalid JSON'}, status=400)
 
 
-def delete_allergy(request, id):
-   allergy = get_object_or_404(Allergy, id=id)
-   if request.method == "DELETE":
-       try:
-           allergy = Allergy.objects.get(id=allergy.id)
-           allergy.delete()
-           return JsonResponse({"success": True})
-       except Allergy.DoesNotExist:
-            return JsonResponse({"error": "Allergy not found"}, status=404)
-   return JsonResponse({"error": "Invalid request"}, status=400)
+@csrf_exempt
+def delete_allergy(request, pk):
+    if request.method == 'DELETE':
+        try:
+            allergy = Allergy.objects.get(pk=pk)
+            allergy.delete()
+            return JsonResponse({'success': True})
+        except Allergy.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Allergy not found'}, status=404)
+    return JsonResponse({'success': False, 'error': 'Invalid request'}, status=400)
+
 
 def update_allergy(request, id):
    allergy = get_object_or_404(Allergy, id=id)

@@ -222,8 +222,41 @@
     </div>
   </div>
 </div>
-
 <script>
+// Function to attach delete behavior to a card
+function attachDeleteHandler(card) {
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    const deleteBtn = card.querySelector('.delete-allergy-btn');
+    if (!deleteBtn) return;
+
+    deleteBtn.addEventListener('click', function() {
+        const allergyId = this.dataset.id;
+        const deleteUrl = "{% url 'delete_allergy' 0 %}".replace('0', allergyId); // Build URL dynamically
+
+        fetch(deleteUrl, {
+            method: 'DELETE',
+            headers: { 'X-CSRFToken': csrfToken },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                card.remove();
+            } else {
+                alert('Error deleting allergy: ' + (data.error || 'Unknown error'));
+            }
+        })
+        .catch(err => console.error('Delete request failed:', err));
+    });
+}
+
+// Attach delete handlers to existing cards on page load
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.card').forEach(card => {
+        attachDeleteHandler(card);
+    });
+});
+
+// Handle creating a new allergy
 document.getElementById("createAllergyForm").addEventListener("submit", function(e) {
     e.preventDefault();
     const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
@@ -243,22 +276,25 @@ document.getElementById("createAllergyForm").addEventListener("submit", function
     })
     .then(response => response.json())
     .then(json => {
-        // Append new allergy card
         const container = document.getElementById("allergy-cards");
         const card = document.createElement("div");
         card.classList.add("card", "mb-3");
+        card.id = `allergy-card-${json.allergy_id}`;
         card.innerHTML = `
             <div class="card-body">
-              <h5 class="card-title">${json.allergyname}</h5>
-              <p class="card-text">
-                <span class="badge ${json.severity_badge_class}">
-                  Test Value: ${json.test_level}
-                  ${json.severity}
-                </span>
-              </p>
+                <h5 class="card-title">${json.allergyname}</h5>
+                <p class="card-text">
+                    <span class="badge ${json.severity_badge_class}">
+                        Test Value: ${json.test_level} ${json.severity}
+                    </span>
+                    <button class="btn btn-sm btn-danger delete-allergy-btn" data-id="${json.allergy_id}">&times;</button>
+                </p>
             </div>
         `;
         container.appendChild(card);
+
+        // Attach delete handler for this new card
+        attachDeleteHandler(card);
 
         // Close modal
         const modal = bootstrap.Modal.getInstance(document.getElementById('createAllergyModal'));
@@ -268,3 +304,7 @@ document.getElementById("createAllergyForm").addEventListener("submit", function
     .catch(err => console.error(err));
 });
 </script>
+
+
+
+</body>
