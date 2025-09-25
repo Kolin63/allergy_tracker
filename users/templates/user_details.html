@@ -77,107 +77,115 @@
       {% endfor %}
     </div>
   </div>
+<!-- Restaurant Modal -->
+<div class="modal fade" id="restaurantModal" tabindex="-1" aria-labelledby="restaurantModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content rounded-3 shadow-lg">
+      <div class="modal-header">
+        <h5 class="modal-title" id="restaurantModalLabel">Add Restaurant with Menu & Foods</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
 
-  <!-- Restaurant Modal -->
-  <div class="modal fade" id="restaurantModal" tabindex="-1" aria-labelledby="restaurantModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
-      <div class="modal-content rounded-3 shadow-lg">
-        <div class="modal-header">
-          <h5 class="modal-title" id="restaurantModalLabel">Add Restaurant with Menu & Foods</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
+      <div class="modal-body">
+        {% if myuser2.is_authenticated %}
+          <!-- Tabs -->
+          <ul class="nav nav-tabs" id="restaurantTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active" id="restaurant-tab" data-bs-toggle="tab" data-bs-target="#restaurant" type="button" role="tab">Restaurant</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="menu-tab" data-bs-toggle="tab" data-bs-target="#menu" type="button" role="tab">Menu</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="section-tab" data-bs-toggle="tab" data-bs-target="#section" type="button" role="tab">Section</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="food-tab" data-bs-toggle="tab" data-bs-target="#food" type="button" role="tab">Food</button>
+            </li>
+          </ul>
 
-        <div class="modal-body">
-          {% if myuser2.is_authenticated %}
-            <!-- Tabs -->
-            <ul class="nav nav-tabs" id="restaurantTabs" role="tablist">
-              <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="restaurant-tab" data-bs-toggle="tab" data-bs-target="#restaurant" type="button" role="tab">Restaurant</button>
-              </li>
-              <li class="nav-item" role="presentation">
-                <button class="nav-link" id="menu-tab" data-bs-toggle="tab" data-bs-target="#menu" type="button" role="tab">Menu</button>
-              </li>
-              <li class="nav-item" role="presentation">
-                <button class="nav-link" id="section-tab" data-bs-toggle="tab" data-bs-target="#section" type="button" role="tab">Section</button>
-              </li>
-              <li class="nav-item" role="presentation">
-                <button class="nav-link" id="food-tab" data-bs-toggle="tab" data-bs-target="#food" type="button" role="tab">Food</button>
-              </li>
-            </ul>
+          <form id="restaurantForm">
+            <div class="tab-content mt-3">
 
-            <form id="restaurantForm">
-              <div class="tab-content mt-3">
-                <!-- Restaurant Tab -->
-                <div class="tab-pane fade show active" id="restaurant" role="tabpanel">
-                  <div class="mb-3">
-                    <label class="form-label">Restaurant Name</label>
-                    <input type="text" class="form-control" id="restaurantName" required>
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label">Location</label>
-                    <input type="text" class="form-control" id="restaurantLocation" required>
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label">Description</label>
-                    <textarea class="form-control" id="restaurantDescription"></textarea>
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label">Phone Number</label>
-                    <input type="tel" class="form-control" id="restaurantPhone">
-                  </div>
+              <!-- Restaurant Tab -->
+              <div class="tab-pane fade show active" id="restaurant" role="tabpanel">
+                <div class="mb-3">
+                  <label class="form-label">Restaurant Name</label>
+                  <input type="text" class="form-control" id="restaurantName" required>
                 </div>
+                <div class="mb-3">
+                  <label class="form-label">Location</label>
+                  <input type="text" class="form-control" id="restaurantLocation" required>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Description</label>
+                  <textarea class="form-control" id="restaurantDescription"></textarea>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Phone Number</label>
+                  <input type="tel" class="form-control" id="restaurantPhone">
+                </div>
+              </div>
 
-                <!-- Menu Tab -->
-                <div class="tab-pane fade" id="menu" role="tabpanel">
-                  <div class="mb-3">
+              <!-- Menu Tab -->
+              <div class="tab-pane fade" id="menu" role="tabpanel">
+                <div id="menuList">
+                  <div class="mb-3 menu-item">
                     <label class="form-label">Menu Name</label>
-                    <input type="text" class="form-control" id="menuName" required>
+                    <input type="text" class="form-control menuNameInput" required>
                   </div>
                 </div>
+                <button type="button" class="btn btn-sm btn-outline-secondary" id="addMenuBtn">Add Another Menu</button>
+              </div>
 
-                <!-- Section Tab -->
-                <div class="tab-pane fade" id="section" role="tabpanel">
-                  <div class="mb-3">
+              <!-- Section Tab -->
+              <div class="tab-pane fade" id="section" role="tabpanel">
+                <div id="sectionList">
+                  <div class="mb-3 section-item">
                     <label class="form-label">Section Title</label>
-                    <input type="text" class="form-control" id="sectionTitle" required>
+                    <input type="text" class="form-control sectionTitleInput" required>
                   </div>
                 </div>
+                <button type="button" class="btn btn-sm btn-outline-secondary" id="addSectionBtn">Add Another Section</button>
+              </div>
 
-                <!-- Food Tab -->
-                <div class="tab-pane fade" id="food" role="tabpanel">
-                  <div class="mb-3">
+              <!-- Food Tab -->
+              <div class="tab-pane fade" id="food" role="tabpanel">
+                <div id="foodList">
+                  <div class="mb-3 food-item">
                     <label class="form-label">Food Name</label>
-                    <input type="text" class="form-control" id="foodName" required>
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label">Allergens</label>
-                    <select class="form-select" id="foodAllergens" multiple>
+                    <input type="text" class="form-control foodNameInput" required>
+                    <label class="form-label mt-2">Allergens</label>
+                    <select class="form-select foodAllergensSelect" multiple>
                       {% for allergen in food_allergens %}
                         <option value="{{ allergen.id }}">{{ allergen.allergen }}</option>
                       {% endfor %}
                     </select>
                   </div>
                 </div>
+                <button type="button" class="btn btn-sm btn-outline-secondary" id="addFoodBtn">Add Another Food</button>
               </div>
-            </form>
-          {% else %}
-            <div class="alert alert-warning text-center mb-0">
-              You must be logged in to add restaurants.
-            </div>
-          {% endif %}
-        </div>
 
-        <div class="modal-footer">
-          {% if myuser.is_authenticated %}
-            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-            <button type="button" class="btn btn-primary" id="saveRestaurantBtn">Save Restaurant</button>
-          {% else %}
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          {% endif %}
-        </div>
+            </div>
+          </form>
+        {% else %}
+          <div class="alert alert-warning text-center mb-0">
+            You must be logged in to add restaurants.
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="modal-footer">
+        {% if myuser2.is_authenticated %}
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" id="saveRestaurantBtn">Save Restaurant</button>
+        {% else %}
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        {% endif %}
       </div>
     </div>
   </div>
+</div>
 
  <!-- Create Allergy Modal -->
 <div class="modal fade" id="createAllergyModal" tabindex="-1" aria-labelledby="createAllergyModalLabel" aria-hidden="true">
