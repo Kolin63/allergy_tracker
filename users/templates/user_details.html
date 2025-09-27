@@ -60,6 +60,7 @@
   </nav>
 
   <div class="container mt-4">
+    <h3>My Allergies</h3>
     <div id="allergy-cards" class="row">
       {% for allergy in allergies %}
         <div class="card mb-3">
@@ -263,6 +264,11 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+</script>
+
+
+{% if myuser2 and myuser2.id %}
+<script>
 // Handle creating a new allergy
 document.getElementById("createAllergyForm").addEventListener("submit", function(e) {
     e.preventDefault();
@@ -311,7 +317,7 @@ document.getElementById("createAllergyForm").addEventListener("submit", function
     .catch(err => console.error(err));
 });
 </script>
-
+{% endif %}
 
 
 </body>

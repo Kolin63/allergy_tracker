@@ -11,9 +11,15 @@ from django.views.decorators.csrf import csrf_exempt
 
 CustomUser= get_user_model()
 
+def allergies(request):
+    return HttpResponse("Hello, world. You're at the allergies index.")
+
 # Create your views here.
 @csrf_exempt
 def allergies(request, user_id):
+   if user_id is None:
+      return HttpResponse("User ID is required.", status=400)
+
    user = get_object_or_404(CustomUser, id=user_id)
    queryset = user.allergies.all()
 
