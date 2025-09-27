@@ -108,8 +108,8 @@ def logout(request):
         f"https://{settings.AUTH0_DOMAIN}/v2/logout?"
         + urlencode(
             {
-                "returnTo": request.build_absolute_uri(reverse("index")),
-                "client_id": settings.AUTH0_CLIENT_ID,
+                "returnTo": settings.AUTH0_HOME_URL,
+                # "client_id": settings.AUTH0_CLIENT_ID,
             },
             quote_via=quote_plus,
         ),

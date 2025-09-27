@@ -149,6 +149,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH0_DOMAIN = "ayandesai.us.auth0.com"
 AUTH0_CLIENT_ID = "s2WDwHswxn3UYbsmpzsOgGvC2i3i5zyn"
 AUTH0_CLIENT_SECRET = '5IOmBwNt5A4pyu6EMicFHT1w2ifscE0wZhQuaRs2HfWAee1SbjN_vW1o1G2rUca9'
+AUTH0_HOME_URL = "https://fictional-space-system-q7pr9pp57694fqww-8000.app.github.dev/"
 AUTH0_CALLBACK_URL = "https://fictional-space-system-q7pr9pp57694fqww-8000.app.github.dev/callback/"
 LOGOUT_REDIRECT_URL = "fictional-space-system-q7pr9pp57694fqww-8000.app.github.dev/logout/"
 AUTH0_LOGIN_URL = "fictional-space-system-q7pr9pp57694fqww-8000.app.github.dev/login/"
