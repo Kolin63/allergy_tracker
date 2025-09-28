@@ -1,323 +1,343 @@
 <!DOCTYPE html>
 {% load static %}
 
-<html>
+<html lang="en">
 <head>
-    <meta charset='utf-8'>
-    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>AllergyTracker</title>
-    <meta name='viewport' content='width=device-width, initial-scale=1'>
-    <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
-    <script src='main.js'></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'main.css' %}">
 </head>
 <body>
-   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
 
-  <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg bg-body-tertiary">
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
     <div class="container-fluid">
-      <!-- Navbar brand -->
-      <a class="navbar-brand" href="#">
-        <img src="{% static 'images/logo.png' %}" width="60" height="60" class="d-inline-block align-text-top">
-      </a>
+        <a class="navbar-brand" href="#">
+            <img src="{% static 'images/logo.png' %}" width="60" height="60" class="d-inline-block align-text-top">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-      <!-- Collapsible menu button (mobile) -->
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <button type="button" class="btn btn-primary me-3" data-bs-toggle="modal" data-bs-target="#createAllergyModal">
+                    Create Allergy
+                </button>
+                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#restaurantModal">
+                    Create Restaurant
+                </button>
+            </ul>
 
-      <!-- Nav contents -->
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <!-- Left-side nav links -->
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <button type="button" class="btn btn-primary me-3" data-bs-toggle="modal" data-bs-target="#createAllergyModal">
-            Create Allergy
-          </button>
-          <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#restaurantModal">
-            Create Restaurant
-          </button>
-        </ul>
-      
-        <form class="d-flex mx-auto" role="search">
-          <input class="form-control me-2" type="search" placeholder="Search for Restaurants..." aria-label="Search">
-          <button class="btn btn-outline-success" type="submit">Search</button>
-        </form>
+            <form class="d-flex mx-auto" role="search">
+                <input class="form-control me-2" type="search" placeholder="Search for Restaurants..." aria-label="Search">
+                <button class="btn btn-outline-success" type="submit">Search</button>
+            </form>
 
-        <!-- Buttons FAR right -->
-        <div class="d-flex ms-auto">
-          {% if myuser2.is_authenticated %}
-            <span class="me-3">Hello, {{ myuser2.username }}</span>
-            <a href="{% url 'logout' %}" class="btn btn-outline-danger">Logout</a>
-          {% else %}
-            <a href="{% url 'login' %}" class="btn btn-outline-primary me-2">Login</a>
-            <a href="{% url 'login' %}?screen_hint=signup" class="btn btn-primary">Create Account</a>
-          {% endif %}
+            <div class="d-flex ms-auto">
+                {% if myuser2.is_authenticated %}
+                    <span class="me-3">Hello, {{ myuser2.username }}</span>
+                    <a href="{% url 'logout' %}" class="btn btn-outline-danger">Logout</a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-outline-primary me-2">Login</a>
+                    <a href="{% url 'login' %}?screen_hint=signup" class="btn btn-primary">Create Account</a>
+                {% endif %}
+            </div>
         </div>
-      </div>
     </div>
-  </nav>
+</nav>
 
-  <div class="container mt-4">
+<!-- Allergies Section -->
+<div class="container mt-4">
     <h3>My Allergies</h3>
     <div id="allergy-cards" class="row">
-      {% for allergy in allergies %}
-        <div class="card mb-3">
-          <div class="card-body">
-            <h5 class="card-title">{{ allergy.allergyname }}</h5>
-            <p class="card-text">
-              Test Value: {{ allergy.test_level }}
-              <span class="badge {{ allergy.severity_badge_class }}">
-                {{ allergy.severity }}
-              </span>
-            </p>
-          </div>
-        </div>
-      {% endfor %}
+        {% for allergy in allergies %}
+            <div class="card mb-3" id="allergy-card-{{ allergy.id }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ allergy.allergyname }}</h5>
+                    <p class="card-text">
+                        Test Value: {{ allergy.test_level }}
+                        <span class="badge {{ allergy.severity_badge_class }}">{{ allergy.severity }}</span>
+                        <button class="btn btn-sm btn-danger delete-allergy-btn" data-id="{{ allergy.id }}">&times;</button>
+                    </p>
+                </div>
+            </div>
+        {% endfor %}
     </div>
-  </div>
+</div>
+
+<!-- Create Allergy Modal -->
+<div class="modal fade" id="createAllergyModal" tabindex="-1" aria-labelledby="createAllergyModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add New Allergy</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {% if myuser2.is_authenticated %}
+                    <form id="createAllergyForm" method="POST" action="{% url 'allergies' myuser2.id %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="allergyname" class="form-label">Allergy</label>
+                            <select class="form-select" id="allergyname" name="allergyname" required>
+                                <option value="">Select an allergy</option>
+                                <option value="Nuts">Nuts</option>
+                                <option value="Fish">Fish</option>
+                                <option value="Dairy">Dairy</option>
+                                <option value="Eggs">Eggs</option>
+                                <option value="Gluten">Gluten</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="test_level" class="form-label">Allergy Test Value</label>
+                            <input type="number" step="0.01" class="form-control" id="test_level" name="test_level" placeholder="Enter test value" required>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Save Allergy</button>
+                        </div>
+                    </form>
+                {% else %}
+                    <p class="text-danger">You must be logged in to add allergies.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Restaurant Modal -->
 <div class="modal fade" id="restaurantModal" tabindex="-1" aria-labelledby="restaurantModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-xl">
-    <div class="modal-content rounded-3 shadow-lg">
-      <div class="modal-header">
-        <h5 class="modal-title" id="restaurantModalLabel">Add Restaurant with Menu & Foods</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-
-      <div class="modal-body">
-        {% if myuser2.is_authenticated %}
-          <!-- Tabs -->
-          <ul class="nav nav-tabs" id="restaurantTabs" role="tablist">
-            <li class="nav-item" role="presentation">
-              <button class="nav-link active" id="restaurant-tab" data-bs-toggle="tab" data-bs-target="#restaurant" type="button" role="tab">Restaurant</button>
-            </li>
-            <li class="nav-item" role="presentation">
-              <button class="nav-link" id="menu-tab" data-bs-toggle="tab" data-bs-target="#menu" type="button" role="tab">Menu</button>
-            </li>
-            <li class="nav-item" role="presentation">
-              <button class="nav-link" id="section-tab" data-bs-toggle="tab" data-bs-target="#section" type="button" role="tab">Section</button>
-            </li>
-            <li class="nav-item" role="presentation">
-              <button class="nav-link" id="food-tab" data-bs-toggle="tab" data-bs-target="#food" type="button" role="tab">Food</button>
-            </li>
-          </ul>
-
-          <form id="restaurantForm">
-            <div class="tab-content mt-3">
-
-              <!-- Restaurant Tab -->
-              <div class="tab-pane fade show active" id="restaurant" role="tabpanel">
-                <div class="mb-3">
-                  <label class="form-label">Restaurant Name</label>
-                  <input type="text" class="form-control" id="restaurantName" required>
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">Location</label>
-                  <input type="text" class="form-control" id="restaurantLocation" required>
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">Description</label>
-                  <textarea class="form-control" id="restaurantDescription"></textarea>
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">Phone Number</label>
-                  <input type="tel" class="form-control" id="restaurantPhone">
-                </div>
-              </div>
-
-              <!-- Menu Tab -->
-              <div class="tab-pane fade" id="menu" role="tabpanel">
-                <div id="menuList">
-                  <div class="mb-3 menu-item">
-                    <label class="form-label">Menu Name</label>
-                    <input type="text" class="form-control menuNameInput" required>
-                  </div>
-                </div>
-                <button type="button" class="btn btn-sm btn-outline-secondary" id="addMenuBtn">Add Another Menu</button>
-              </div>
-
-              <!-- Section Tab -->
-              <div class="tab-pane fade" id="section" role="tabpanel">
-                <div id="sectionList">
-                  <div class="mb-3 section-item">
-                    <label class="form-label">Section Title</label>
-                    <input type="text" class="form-control sectionTitleInput" required>
-                  </div>
-                </div>
-                <button type="button" class="btn btn-sm btn-outline-secondary" id="addSectionBtn">Add Another Section</button>
-              </div>
-
-              <!-- Food Tab -->
-              <div class="tab-pane fade" id="food" role="tabpanel">
-                <div id="foodList">
-                  <div class="mb-3 food-item">
-                    <label class="form-label">Food Name</label>
-                    <input type="text" class="form-control foodNameInput" required>
-                    <label class="form-label mt-2">Allergens</label>
-                    <select class="form-select foodAllergensSelect" multiple>
-                      {% for allergen in food_allergens %}
-                        <option value="{{ allergen.id }}">{{ allergen.allergen }}</option>
-                      {% endfor %}
-                    </select>
-                  </div>
-                </div>
-                <button type="button" class="btn btn-sm btn-outline-secondary" id="addFoodBtn">Add Another Food</button>
-              </div>
-
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content rounded-3 shadow-lg">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Restaurant with Menu & Foods</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
-          </form>
-        {% else %}
-          <div class="alert alert-warning text-center mb-0">
-            You must be logged in to add restaurants.
-          </div>
-        {% endif %}
-      </div>
+            <div class="modal-body">
+                {% if myuser2.is_authenticated %}
+                    <form id="restaurantForm">
+                        <!-- Tabs -->
+                        <ul class="nav nav-tabs" id="restaurantTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="restaurant-tab" data-bs-toggle="tab" data-bs-target="#restaurant" type="button" role="tab">Restaurant</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="menu-tab" data-bs-toggle="tab" data-bs-target="#menu" type="button" role="tab">Menu</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="section-tab" data-bs-toggle="tab" data-bs-target="#section" type="button" role="tab">Section</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="food-tab" data-bs-toggle="tab" data-bs-target="#food" type="button" role="tab">Food</button>
+                            </li>
+                        </ul>
 
-      <div class="modal-footer">
-        {% if myuser2.is_authenticated %}
-          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-primary" id="saveRestaurantBtn">Save Restaurant</button>
-        {% else %}
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        {% endif %}
-      </div>
-    </div>
-  </div>
-</div>
+                        <div class="tab-content mt-3">
+                            <!-- Restaurant Tab -->
+                            <div class="tab-pane fade show active" id="restaurant" role="tabpanel">
+                                <div class="mb-3">
+                                    <label class="form-label">Restaurant Name</label>
+                                    <input type="text" class="form-control" id="restaurantName" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Location</label>
+                                    <input type="text" class="form-control" id="restaurantLocation" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Description</label>
+                                    <textarea class="form-control" id="restaurantDescription"></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Phone Number</label>
+                                    <input type="tel" class="form-control" id="restaurantPhone">
+                                </div>
+                            </div>
 
- <!-- Create Allergy Modal -->
-<div class="modal fade" id="createAllergyModal" tabindex="-1" aria-labelledby="createAllergyModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      
-      <div class="modal-header">
-        <h5 class="modal-title" id="createAllergyModalLabel">Add New Allergy</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      
-      <div class="modal-body">
-        {% if myuser2.is_authenticated %}
-          <form id="createAllergyForm" method="POST" action="{% url 'allergies' myuser2.id%}">
-            {% csrf_token %}
-            <div class="mb-3">
-              <label for="allergyname" class="form-label">Allergy</label>
-              <select class="form-select" name="allergyname" id="allergyname" required>
-                <option value="">Select an allergy</option>
-                <option value="Nuts">Nuts</option>
-                <option value="Fish">Fish</option>
-                <option value="Dairy">Dairy</option>
-                <option value="Eggs">Eggs</option>
-                <option value="Gluten">Gluten</option>
-              </select>
-            </div>
-            <div class="mb-3">
-              <label for="test_level" class="form-label">Allergy Test Value</label>
-              <input type="number" step="0.01" class="form-control" name="test_level" id="test_level" placeholder="Enter test value" required>
+                            <!-- Menu Tab -->
+                            <div class="tab-pane fade" id="menu" role="tabpanel">
+                                <div id="menuList">
+                                    <div class="mb-3 menu-item">
+                                        <label class="form-label">Menu Name</label>
+                                        <input type="text" class="form-control menuNameInput" required>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-sm btn-outline-secondary" id="addMenuBtn">Add Another Menu</button>
+                            </div>
+
+                            <!-- Section Tab -->
+                            <div class="tab-pane fade" id="section" role="tabpanel">
+                                <div id="sectionList">
+                                    <div class="mb-3 section-item">
+                                        <label class="form-label">Section Title</label>
+                                        <input type="text" class="form-control sectionTitleInput" required>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-sm btn-outline-secondary" id="addSectionBtn">Add Another Section</button>
+                            </div>
+
+                            <!-- Food Tab -->
+                            <div class="tab-pane fade" id="food" role="tabpanel">
+                                <div id="foodList">
+                                    <div class="mb-3 food-item">
+                                        <label class="form-label">Food Name</label>
+                                        <input type="text" class="form-control foodNameInput" required>
+                                        <label class="form-label mt-2">Allergens</label>
+                                        <select class="form-select foodAllergensSelect" multiple>
+                                            {% for allergen in food_allergens %}
+                                                <option value="{{ allergen.id }}">{{ allergen.allergen }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-sm btn-outline-secondary" id="addFoodBtn">Add Another Food</button>
+                            </div>
+                        </div>
+                    </form>
+                {% else %}
+                    <div class="alert alert-warning text-center mb-0">You must be logged in to add restaurants.</div>
+                {% endif %}
             </div>
 
-            <!-- Modal Footer with Save Button -->
             <div class="modal-footer">
-              <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-              <button type="submit" class="btn btn-primary">Save Allergy</button>
+                {% if myuser2.is_authenticated %}
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveRestaurantBtn">Save Restaurant</button>
+                {% else %}
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                {% endif %}
             </div>
-          </form>
-        {% else %}
-          <p class="text-danger">You must be logged in to add allergies.</p>
-        {% endif %}
-      </div>
+        </div>
     </div>
-  </div>
 </div>
-<script>
-// Function to attach delete behavior to a card
-function attachDeleteHandler(card) {
-    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-    const deleteBtn = card.querySelector('.delete-allergy-btn');
-    if (!deleteBtn) return;
 
-    deleteBtn.addEventListener('click', function() {
-        const allergyId = this.dataset.id;
-        const deleteUrl = "{% url 'delete_allergy' 0 %}".replace('0', allergyId); // Build URL dynamically
+<!-- Bootstrap JS Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
 
-        fetch(deleteUrl, {
-            method: 'DELETE',
-            headers: { 'X-CSRFToken': csrfToken },
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                card.remove();
-            } else {
-                alert('Error deleting allergy: ' + (data.error || 'Unknown error'));
-            }
-        })
-        .catch(err => console.error('Delete request failed:', err));
-    });
-}
+<!-- Custom JS -->
+<script src="{% static 'main.js' %}"></script>
 
-// Attach delete handlers to existing cards on page load
-document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.card').forEach(card => {
-        attachDeleteHandler(card);
-    });
-});
-
-</script>
-
-
+<!-- Allergy & Restaurant JS -->
 {% if myuser2 and myuser2.id %}
 <script>
-// Handle creating a new allergy
-document.getElementById("createAllergyForm").addEventListener("submit", function(e) {
-    e.preventDefault();
-    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+document.addEventListener('DOMContentLoaded', function() {
+    // --- Allergy Creation ---
+    const allergyForm = document.getElementById("createAllergyForm");
+    if(allergyForm){
+        allergyForm.addEventListener("submit", function(e){
+            e.preventDefault();
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            const data = {
+                allergyname: document.getElementById("allergyname").value,
+                test_level: document.getElementById("test_level").value
+            };
+            fetch("{% url 'allergies' myuser2.id %}", {
+                method:"POST",
+                headers: {"Content-Type":"application/json","X-CSRFToken":csrfToken},
+                body: JSON.stringify(data)
+            })
+            .then(res=>res.json())
+            .then(json=>{
+                const container = document.getElementById("allergy-cards");
+                const card = document.createElement("div");
+                card.classList.add("card","mb-3");
+                card.id = `allergy-card-${json.allergy_id}`;
+                card.innerHTML = `
+                    <div class="card-body">
+                        <h5 class="card-title">${json.allergyname}</h5>
+                        <p class="card-text">
+                            <span class="badge ${json.severity_badge_class}">Test Value: ${json.test_level} ${json.severity}</span>
+                            <button class="btn btn-sm btn-danger delete-allergy-btn" data-id="${json.allergy_id}">&times;</button>
+                        </p>
+                    </div>`;
+                container.appendChild(card);
+                attachDeleteHandler(card);
+                bootstrap.Modal.getInstance(document.getElementById('createAllergyModal')).hide();
+                allergyForm.reset();
+            }).catch(err=>console.error(err));
+        });
+    }
 
-    const data = {
-        allergyname: document.getElementById("allergyname").value,
-        test_level: document.getElementById("test_level").value
-    };
-
-    fetch("{% url 'allergies' myuser2.id %}", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": csrfToken
-        },
-        body: JSON.stringify(data)
-    })
-    .then(response => response.json())
-    .then(json => {
-        const container = document.getElementById("allergy-cards");
-        const card = document.createElement("div");
-        card.classList.add("card", "mb-3");
-        card.id = `allergy-card-${json.allergy_id}`;
-        card.innerHTML = `
-            <div class="card-body">
-                <h5 class="card-title">${json.allergyname}</h5>
-                <p class="card-text">
-                    <span class="badge ${json.severity_badge_class}">
-                        Test Value: ${json.test_level} ${json.severity}
-                    </span>
-                    <button class="btn btn-sm btn-danger delete-allergy-btn" data-id="${json.allergy_id}">&times;</button>
-                </p>
-            </div>
-        `;
-        container.appendChild(card);
-
-        // Attach delete handler for this new card
+    // --- Attach delete to existing allergies ---
+    document.querySelectorAll('.delete-allergy-btn').forEach(btn=>{
+        const card = btn.closest('.card');
         attachDeleteHandler(card);
+    });
 
-        // Close modal
-        const modal = bootstrap.Modal.getInstance(document.getElementById('createAllergyModal'));
-        modal.hide();
-        document.getElementById("createAllergyForm").reset();
-    })
-    .catch(err => console.error(err));
+    // --- Restaurant creation ---
+    const saveRestaurantBtn = document.getElementById("saveRestaurantBtn");
+    if(saveRestaurantBtn){
+        saveRestaurantBtn.addEventListener("click", function(){
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            const restaurantData = {
+                name: document.getElementById("restaurantName").value,
+                location: document.getElementById("restaurantLocation").value,
+                description: document.getElementById("restaurantDescription").value,
+                phone_number: document.getElementById("restaurantPhone").value,
+                menus: []
+            };
+            document.querySelectorAll(".menu-item .menuNameInput").forEach(menuInput=>{
+                restaurantData.menus.push({name:menuInput.value, sections:[]});
+            });
+            document.querySelectorAll(".section-item .sectionTitleInput").forEach((sectionInput,i)=>{
+                if(restaurantData.menus[i]) restaurantData.menus[i].sections.push({title:sectionInput.value, foods:[]});
+            });
+            document.querySelectorAll(".food-item").forEach((foodItem,i)=>{
+                const foodName = foodItem.querySelector(".foodNameInput").value;
+                const allergens = Array.from(foodItem.querySelector(".foodAllergensSelect").selectedOptions).map(o=>o.textContent);
+                if(restaurantData.menus[0] && restaurantData.menus[0].sections[0]){
+                    restaurantData.menus[0].sections[0].foods.push({name:foodName, allergens});
+                }
+            });
+
+            fetch("{% url 'create_restaurant' %}", {
+                method:"POST",
+                headers: {"Content-Type":"application/json","X-CSRFToken":csrfToken},
+                body: JSON.stringify(restaurantData)
+            }).then(res=>res.json())
+            .then(json=>{
+                if(json.success){
+                    const container = document.getElementById("restaurant-cards");
+                    const card = document.createElement("div");
+                    card.classList.add("card","mb-3");
+                    card.innerHTML = `<div class="card-body">
+                        <h4 class="card-title">${json.name}</h4>
+                        <p><strong>Location:</strong> ${json.location}</p>
+                        <p><strong>Description:</strong> ${json.description}</p>
+                        <p><strong>Phone:</strong> ${json.phone_number}</p>
+                    </div>`;
+                    container.appendChild(card);
+                    bootstrap.Modal.getInstance(document.getElementById("restaurantModal")).hide();
+                    document.getElementById("restaurantForm").reset();
+                }
+            }).catch(err=>console.error(err));
+        });
+    }
 });
+
+// --- Delete Handler ---
+function attachDeleteHandler(card){
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    const btn = card.querySelector('.delete-allergy-btn');
+    if(!btn) return;
+    btn.addEventListener('click', function(){
+        const allergyId = this.dataset.id;
+        const url = "{% url 'delete_allergy' 0 %}".replace('0', allergyId);
+        fetch(url, {method:'DELETE', headers:{'X-CSRFToken':csrfToken}})
+            .then(res=>res.json())
+            .then(data=>{ if(data.success) card.remove(); else alert('Error deleting allergy') })
+            .catch(err=>console.error(err));
+    });
+}
 </script>
 {% endif %}
-
-
 </body>
+</html>

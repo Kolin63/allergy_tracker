@@ -748,7 +748,7 @@ def restaurant_details(request, id):
             'name': restaurant.name,
             'location': restaurant.location,
             'description': restaurant.description,
-            'phone_number': restaurant.phone_number,
+             'phone_number': restaurant.phone_number,
             'owner': owner.id if owner else None,
             'menu': restaurant.menu.id if restaurant.menu else None,
             "AUTH0_DOMAIN": settings.AUTH0_DOMAIN,
