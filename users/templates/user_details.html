@@ -62,7 +62,7 @@
                 </div>
             </div>
         {% empty %}
-            <p class="text-muted">No allergies yet.</p>
+            
         {% endfor %}
     </div>
 </div>
@@ -123,7 +123,7 @@
           {% for menu in restaurant.menus.all %}
             <div class="ms-3">
               <h5>Menu: {{ menu.name }}</h5>
-
+sadsadsadsad
               {% for section in menu.sections.all %}
                 <div class="ms-3">
                   <strong>Section: {{ section.title }}</strong>
@@ -149,7 +149,7 @@
         </div>
       </div>
     {% empty %}
-      <p class="text-muted">No restaurants yet.</p>
+      
     {% endfor %}
   </div>
 </div>
@@ -221,10 +221,12 @@
 
                                         <label class="form-label mt-2">Allergens</label>
                                         <select class="form-select foodAllergensSelect" multiple>
-                                            <!-- server-side rendered allergen options -->
-                                            {% for allergen in food_allergens %}
-                                                <option value="{{ allergen.id }}">{{ allergen.allergen }}</option>
-                                            {% endfor %}
+                                            <option value="">Select an allergy</option>
+                                            <option value="Nuts">Nuts</option>
+                                            <option value="Fish">Fish</option>
+                                            <option value="Dairy">Dairy</option>
+                                            <option value="Eggs">Eggs</option>
+                                            <option value="Gluten">Gluten</option>
                                         </select>
                                     </div>
                                 </div>
