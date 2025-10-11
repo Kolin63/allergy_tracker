@@ -8,8 +8,6 @@ from urllib.parse import quote_plus, urlencode
 import json
 from authlib.integrations.django_client import OAuth
 from django.views.decorators.csrf import csrf_exempt
-from .models import Food, Food_Allergen, Allergy
-from .models import CustomUser, Restaurant, Menu, Menu_Section
 from django.conf import settings
 from authlib.integrations.django_client import OAuth
 from django.shortcuts import redirect
@@ -17,8 +15,8 @@ from django.conf import settings
 from django.urls import reverse
 import requests
 
-
-from .models import CustomUser, Restaurant, Menu, Menu_Section, Food, Food_Allergen, Allergy
+from allergies.models import Allergy
+from .models import CustomUser, Restaurant, Menu, Menu_Section, Food, Food_Allergen
 
 # Create your views here.
 
@@ -157,6 +155,7 @@ def index(request):
         "AUTH0_DOMAIN": settings.AUTH0_DOMAIN,
         "AUTH0_CLIENT_ID": settings.AUTH0_CLIENT_ID,
         "AUTH0_CALLBACK_URL": settings.AUTH0_CALLBACK_URL,
+        "allergies": Allergy.objects.all(),
     }
 
     return render(request, "user_details.html", context)
@@ -783,7 +782,7 @@ def main(request):
         # fallback to authenticated user if using Django auth
         user = request.user if request.user.is_authenticated else None
 
-    return render(request, 'user_details.html', {'myuser2': user, **context})
+    return render(request, 'user_details.html', {'myuser2': user, "allergies": Allergy.objects.all(), **context})
 
 
 

@@ -58,6 +58,13 @@
 <!-- Allergies Section -->
 <div class="container mt-4">
     <h3>My Allergies</h3>
+    {{ allergies.count }} total allergies.
+    <hr>
+    {% if myuser.exists %}
+        <div class="alert alert-warning text-center mb-0">You have food allergies! Be cautious when dining out.</div>
+    {% else %}
+        <div class="alert alert-success text-center mb-0">No known food allergies. Enjoy your meals!</div>
+    {% endif %}
     <div id="allergy-cards" class="row">
         {% for allergy in allergies %}
             <div class="card mb-3 col-12" id="allergy-card-{{ allergy.id }}">
