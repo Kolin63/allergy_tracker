@@ -28,10 +28,19 @@
                 <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#restaurantModal">Create Restaurant</button>
             </ul>
 
-            <form class="d-flex mx-auto" role="search">
-                <input class="form-control me-2" type="search" placeholder="Search for Restaurants..." aria-label="Search">
-                <button class="btn btn-outline-success" type="submit">Search</button>
-            </form>
+            <form class="d-flex mx-auto position-relative" id="restaurantSearchForm" onsubmit="return false;">
+                <input 
+                    class="form-control me-2" 
+                    type="search" 
+                    id="restaurantSearchInput" 
+                    placeholder="Search for Restaurants..." 
+                    aria-label="Search"
+                >
+                <div id="searchResults" class="list-group position-absolute w-100 shadow-sm" 
+                    style="z-index: 1000; top: 100%; display: none;"></div>
+                </form>
+
+
 
             <div class="d-flex ms-auto">
                 {% if myuser2 and myuser2.is_authenticated %}
@@ -123,7 +132,7 @@
           {% for menu in restaurant.menus.all %}
             <div class="ms-3">
               <h5>Menu: {{ menu.name }}</h5>
-sadsadsadsad
+
               {% for section in menu.sections.all %}
                 <div class="ms-3">
                   <strong>Section: {{ section.title }}</strong>
@@ -372,7 +381,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
                 restaurantData.menus.push(menuObj);
             });
-
+ 
             fetch("{% url 'restaurants' myuser2.id %}", {
                 method: "POST",
                 headers: { "Content-Type": "application/json", "X-CSRFToken": csrfToken },

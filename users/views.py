@@ -33,6 +33,7 @@ auth0 = oauth.register(
     client_kwargs={'scope': 'openid profile email'},
     server_metadata_url=f'https://{settings.AUTH0_DOMAIN}/.well-known/openid-configuration'
 )
+#views for users and auth0 things with users
 def users(request):
     myusers = CustomUser.objects.all().values()
     template = loader.get_template('all_users.html')
@@ -43,7 +44,7 @@ def users(request):
         "AUTH0_CALLBACK_URL": settings.AUTH0_CALLBACK_URL,
     }
     return HttpResponse(template.render(context,request))
-
+#thing to redirect users to details
 def details(request, id):
     myuser = CustomUser.objects.get(id=id)
     template = loader.get_template('user_details.html')
@@ -784,4 +785,20 @@ def main(request):
 
     return render(request, 'user_details.html', {'myuser2': user, **context})
 
-#Make sure is_authentricated crosses over with user_details
+
+
+
+def search_restaurants(request):
+    query = request.GET.get('q', '')
+    results = []
+    if query:
+        restaurants = Restaurant.objects.filter(name__icontains=query)
+        for r in restaurants:
+            results.append({
+                'id': r.id,
+                'name': r.name,
+                'location': r.location,
+                'description': r.description,
+                'phone_number': r.phone_number,
+            })
+    return JsonResponse({'results': results})

@@ -45,6 +45,8 @@ urlpatterns = [
     path('food_allergens/<int:id>/update/', views.update_food_allergen, name='update_food_allergen'),
     path('food_allergens/<int:id>/details/', views.food_allergen_details, name='food_allergen_details'),
     
+    path('search-restaurants/', views.search_restaurants, name='search_restaurants'),
+
     # Test session
     path('test-session/', views.test_session, name='test_session'),
 ]
