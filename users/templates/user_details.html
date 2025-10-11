@@ -58,7 +58,6 @@
 <!-- Allergies Section -->
 <div class="container mt-4">
     <h3>My Allergies</h3>
-    {{ allergies.count }} total allergies.
     <hr>
     {% if myuser.exists %}
         <div class="alert alert-warning text-center mb-0">You have food allergies! Be cautious when dining out.</div>
@@ -454,6 +453,16 @@ function attachDeleteHandler(card) {
             }).catch(err => console.error(err));
     });
 }
+
+  document.getElementById("restaurantSearchInput").addEventListener("keydown", function(event) {
+    if (event.key === "Enter") {
+      event.preventDefault(); // Prevent form submission if inside a form
+      const query = this.value.trim();
+      if (query) {
+        window.location.href = `./?q=${encodeURIComponent(query)}`;
+      }
+    }
+  });
 </script>
 {% endif %}
 </body>

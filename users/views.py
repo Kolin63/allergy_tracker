@@ -646,6 +646,7 @@ def Restaurants(request, user_id):
             phone_number = data.get('phone_number')
             section_id = data.get('section')
             allergen_ids = data.get('allergies', [])
+            
 
             if not name or not location:
                 return JsonResponse({'error': 'name and location are needed buckaroo'}, status=400)
@@ -658,8 +659,24 @@ def Restaurants(request, user_id):
                 phone_number=phone_number or '',
             )
             
-            
-  
+            # ADD MENU AND OTHER OBJECTS POSTED
+            # title = data.get('title')
+            # menu_section_id = data.get('menu_section_id')
+
+            # if not title or not menu_section_id:
+            #     return JsonResponse({'error': 'title and menu_section_id are needed buckaroo'}, status=400)
+
+            # menu = Menu.objects.get(id=menu_section_id)
+            # new_section = Menu_Section.objects.create(title=title)
+
+            # menu.sections.add(new_section)
+
+
+            # section_ids = data.get('sections', [])
+
+            new_menu = Menu.objects.create(name=name, restaurant=new_restaurant)
+            # new_menu.sections.set(Menu_Section.objects.filter(id__in=section_ids))
+
             if section_id:
                 new_section = get_object_or_404(Menu_Section, id=section_id)
                 new_restaurant.menu_sections.add(new_section)
@@ -761,6 +778,7 @@ def restaurant_details(request, id):
     })
 
 def main(request):
+
     context = {
         "AUTH0_DOMAIN": settings.AUTH0_DOMAIN,
         "AUTH0_CLIENT_ID": settings.AUTH0_CLIENT_ID,
@@ -782,7 +800,33 @@ def main(request):
         # fallback to authenticated user if using Django auth
         user = request.user if request.user.is_authenticated else None
 
-    return render(request, 'user_details.html', {'myuser2': user, "allergies": Allergy.objects.all(), **context})
+    query = request.GET.get('q', '')
+    if query:
+        restaurants_qs = Restaurant.objects.filter(name__icontains=query)
+    else:
+        restaurants_qs = Restaurant.objects.all()
+
+    # Build nested structure: each restaurant with its menus
+    restaurants = []
+    for r in restaurants_qs:
+        menus = []
+        for m in r.menus.all():
+            menus.append({
+                'id': m.id,
+                'name': m.name,
+                'sections': list(m.sections.values_list('id', flat=True)),
+            })
+        restaurant_dict = {
+            'id': r.id,
+            'name': r.name,
+            'location': r.location,
+            'description': r.description,
+            'phone_number': r.phone_number,
+            'menus': menus,
+        }
+        restaurants.append(restaurant_dict)
+
+    return render(request, 'user_details.html', {'myuser2': user, "allergies": Allergy.objects.all(), "restaurants": restaurants, **context})
 
 
 
