@@ -135,32 +135,28 @@
           <p><strong>Description:</strong> {{ restaurant.description }}</p>
           <p><strong>Phone:</strong> {{ restaurant.phone_number }}</p>
 
-          {% for menu in restaurant.menus.all %}
+        {% for menu in restaurant.menus %}
             <div class="ms-3">
-              <h5>Menu: {{ menu.name }}</h5>
-
-              {% for section in menu.sections.all %}
-                <div class="ms-3">
-                  <strong>Section: {{ section.title }}</strong>
-                  <ul>
-                    {% for food in section.food_set.all %}
-                      <li>
-                        {{ food.name }}
-                        {% if food.allergies.exists %}
-                          - Allergens:
-                          {% for allergen in food.allergies.all %}
-                            {{ allergen.allergen }}{% if not forloop.last %}, {% endif %}
-                          {% endfor %}
-                        {% endif %}
-                      </li>
-                    {% empty %}
-                      <li class="text-muted">No foods in this section.</li>
-                    {% endfor %}
-                  </ul>
-                </div>
-              {% endfor %}
+                <h5>Menu: {{ menu.name }}</h5>
+                {% for section in menu.sections %}
+                    <div class="ms-3">
+                        <strong>Section: {{ section.title }}</strong>
+                        <ul>
+                            {% for food in section.foods %}
+                                <li>
+                                    {{ food.name }}
+                                    {% if food.allergens %}
+                                        - Allergens: {{ food.allergens|join:", " }}
+                                    {% endif %}
+                                </li>
+                            {% empty %}
+                                <li class="text-muted">No foods in this section.</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endfor %}
             </div>
-          {% endfor %}
+        {% endfor %}
         </div>
       </div>
     {% empty %}

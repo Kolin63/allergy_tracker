@@ -46,6 +46,7 @@ class Food_Allergen(models.Model):
         ("soybeans", "Soybeans"),
         ("sesame", "Sesame"),
         ("fish", "Fish"),
+        ("Nuts", "nuts")
     
     ]
 

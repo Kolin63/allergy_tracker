@@ -204,9 +204,8 @@ def menus(request, user_id):
             section_ids = data.get('sections', [])
 
             restaurant = get_object_or_404(Restaurant, id=restaurant_id)
-            new_menu = Menu.objects.create(name=name)
+            new_menu = Menu.objects.create(name=name, restaurant=restaurant)
             new_menu.sections.set(Menu_Section.objects.filter(id__in=section_ids))
-            new_menu.restaurant = restaurant
             new_menu.save()
 
 
@@ -611,75 +610,127 @@ def foods_details(request, id):
         })
     return render(request, 'user_details.html', {'food': food})
 
+# @csrf_exempt
+# def Restaurants(request, user_id):
+#    user = get_object_or_404(CustomUser, id=user_id)
+#    restaurants = Restaurant.objects.filter(owner=user)
+#    menus = Menu.objects.filter(restaurant__in=restaurants).distinct()
+#    menu_sections = Menu_Section.objects.all() 
+#    food_allergens = Food_Allergen.objects.all()
+#    foods = Food.objects.all()
+
+#    if request.method == 'POST':
+#         try:
+#             data = json.loads(request.body)
+#             name = data.get('name')
+#             location = data.get('location')
+#             description = data.get('description')
+#             phone_number = data.get('phone_number')
+#             section_id = data.get('section')
+#             allergen_ids = data.get('allergies', [])
+            
+
+#             if not name or not location:
+#                 return JsonResponse({'error': 'name and location are needed buckaroo'}, status=400)
+
+#             new_restaurant = Restaurant.objects.create(
+#                 owner=user,
+#                 name=name,
+#                 location=location,
+#                 description=description or '',
+#                 phone_number=phone_number or '',
+#             )
+
+#             new_menu = Menu.objects.create(name=name, restaurant=new_restaurant)
+#             # new_menu.sections.set(Menu_Section.objects.filter(id__in=section_ids))
+
+#             if section_id:
+#                 new_section = get_object_or_404(Menu_Section, id=section_id)
+#                 new_restaurant.menu_sections.add(new_section)
+
+#             return JsonResponse({'status': 'created', 'restaurant_id': new_restaurant.id}, status=201)
+
+#         except json.JSONDecodeError:
+#             return JsonResponse({'error': 'Invalid JSON'}, status=400)
+#         except Exception as e:
+#             return JsonResponse({'error': str(e)}, status=500)
+
+#    search_query = request.GET.get('search')
+#    if search_query:
+#        restaurants = restaurants.filter(name__icontains=search_query)
+
+#    context = {
+#         'menus': menus,
+#         'myuser': user,
+#         'menu_sections': menu_sections,
+#         'food_allergens': food_allergens,
+#         'foods': foods,
+#         'restaurants': restaurants,
+#         "AUTH0_DOMAIN": settings.AUTH0_DOMAIN, 
+#         "AUTH0_CLIENT_ID": settings.AUTH0_CLIENT_ID,
+#         "AUTH0_CALLBACK_URL": settings.AUTH0_CALLBACK_URL,
+
+#     }
+   
+#    return render(request, 'user_details.html', context)
+
+
 @csrf_exempt
 def Restaurants(request, user_id):
-   user = get_object_or_404(CustomUser, id=user_id)
-   restaurants = Restaurant.objects.filter(owner=user)
-   menus = Menu.objects.filter(restaurant__in=restaurants).distinct()
-   menu_sections = Menu_Section.objects.all() 
-   food_allergens = Food_Allergen.objects.all()
-   foods = Food.objects.all()
+    user = get_object_or_404(CustomUser, id=user_id)
+    
 
-
-   # if request.method == 'POST':
-   #    data = request.POST
-   #    allergyname = data.get('allergyname')
-   #    test_level = data.get('test_level')
-   #    category = data.get('category')
-
-   #    new_allergy = Allergy.objects.create(
-   #    allergyname=allergyname,
-   #    test_level=test_level,
-   #    category=category,
-   #  )
-   #    user.allergies.add(new_allergy)
-
-   #    return redirect('user_details', user_id=user.id)
-
-
-   if request.method == 'POST':
+    if request.method == 'POST':
         try:
             data = json.loads(request.body)
+
+            # Basic restaurant fields
             name = data.get('name')
             location = data.get('location')
-            description = data.get('description')
-            phone_number = data.get('phone_number')
-            section_id = data.get('section')
-            allergen_ids = data.get('allergies', [])
-            
+            description = data.get('description', '')
+            phone_number = data.get('phone_number', '')
 
             if not name or not location:
                 return JsonResponse({'error': 'name and location are needed buckaroo'}, status=400)
 
+            # Create restaurant
             new_restaurant = Restaurant.objects.create(
                 owner=user,
                 name=name,
                 location=location,
-                description=description or '',
-                phone_number=phone_number or '',
+                description=description,
+                phone_number=phone_number
             )
-            
-            # ADD MENU AND OTHER OBJECTS POSTED
-            # title = data.get('title')
-            # menu_section_id = data.get('menu_section_id')
+            print(f"[DEBUG] Created Restaurant: id={new_restaurant.id}, name={new_restaurant.name}, location={new_restaurant.location}")
 
-            # if not title or not menu_section_id:
-            #     return JsonResponse({'error': 'title and menu_section_id are needed buckaroo'}, status=400)
+            # Handle menus, sections, and foods
+            menus_data = data.get('menus', [])
+            for menu_data in menus_data:
+                menu_name = menu_data.get('name')
+                menu_obj = Menu.objects.create(name=menu_name, restaurant=new_restaurant)
+                print(f"[DEBUG] Created Menu: id={menu_obj.id}, name={menu_obj.name}, restaurant_id={new_restaurant.id}")
 
-            # menu = Menu.objects.get(id=menu_section_id)
-            # new_section = Menu_Section.objects.create(title=title)
+                for section_data in menu_data.get('sections', []):
+                    section_title = section_data.get('title')
+                    section_obj = Menu_Section.objects.create(title=section_title)
+                    menu_obj.sections.add(section_obj)
 
-            # menu.sections.add(new_section)
+                    for food_data in section_data.get('foods', []):
+                        food_name = food_data.get('name')
+                        allergens_list = food_data.get('allergens', [])
 
+                        food_obj = Food.objects.create(name=food_name, section=section_obj)
+                        print(f"[DEBUG] Created Food: id={food_obj.id}, name={food_obj.name}, section_id={section_obj.id}")
 
-            # section_ids = data.get('sections', [])
-
-            new_menu = Menu.objects.create(name=name, restaurant=new_restaurant)
-            # new_menu.sections.set(Menu_Section.objects.filter(id__in=section_ids))
-
-            if section_id:
-                new_section = get_object_or_404(Menu_Section, id=section_id)
-                new_restaurant.menu_sections.add(new_section)
+                        for allergen_name in allergens_list:
+                            allergen_obj = Food_Allergen.objects.filter(allergen__iexact=allergen_name).first()
+                            if allergen_obj:
+                                food_obj.allergies.add(allergen_obj)
+                                print(f"[DEBUG] Added Food_Allergen '{allergen_obj.allergen}' (id={allergen_obj.id}) to Food id={food_obj.id}")
+                            else:
+                                print(f"[DEBUG] Food_Allergen '{allergen_name}' not found in Food_Allergen table for Food id={food_obj.id}")
+                        # Print all Food_Allergen objects for this food after assignment
+                        print(f"[DEBUG] Food id={food_obj.id} Food_Allergens after assignment: {[a.allergen for a in food_obj.allergies.all()]}")
 
             return JsonResponse({'status': 'created', 'restaurant_id': new_restaurant.id}, status=201)
 
@@ -688,25 +739,10 @@ def Restaurants(request, user_id):
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
 
-   search_query = request.GET.get('search')
-   if search_query:
-       restaurants = restaurants.filter(name__icontains=search_query)
+    # Optionally handle GET requests here
+    return JsonResponse({'message': 'Only POST supported'}, status=405)
 
 
-   context = {
-        'menus': menus,
-        'myuser': user,
-        'menu_sections': menu_sections,
-        'food_allergens': food_allergens,
-        'foods': foods,
-        'restaurants': restaurants,
-        "AUTH0_DOMAIN": settings.AUTH0_DOMAIN, 
-        "AUTH0_CLIENT_ID": settings.AUTH0_CLIENT_ID,
-        "AUTH0_CALLBACK_URL": settings.AUTH0_CALLBACK_URL,
-
-    }
-   
-   return render(request, 'user_details.html', context)
 
 def delete_restaurants(request, id):
   restaurant = get_object_or_404(Restaurant, id=id)
@@ -806,16 +842,40 @@ def main(request):
     else:
         restaurants_qs = Restaurant.objects.all()
 
-    # Build nested structure: each restaurant with its menus
+    # Build nested structure: each restaurant with its menus, sections, foods, and allergies
     restaurants = []
     for r in restaurants_qs:
         menus = []
         for m in r.menus.all():
-            menus.append({
+            sections = []
+            for s in m.sections.all():
+                foods = []
+                for f in s.food_set.all():
+                    allergies = list(f.allergies.all())
+                    food_dict = {
+                        'id': f.id,
+                        'name': f.name,
+                        'allergies': [
+                            {
+                                'value': a.allergen,
+                                'label': dict(Food_Allergen.ALLERGY_CHOICES).get(a.allergen, a.allergen)
+                            } for a in allergies
+                        ],
+                    }
+                    foods.append(food_dict)
+                section_dict = {
+                    'id': s.id,
+                    'title': s.title,
+                    'foods': foods,
+                }
+                sections.append(section_dict)
+            menu_dict = {
                 'id': m.id,
                 'name': m.name,
-                'sections': list(m.sections.values_list('id', flat=True)),
-            })
+                'sections': sections,
+            }
+            print(f"[DEBUG] Built Menu Dict: {menu_dict}")
+            menus.append(menu_dict)
         restaurant_dict = {
             'id': r.id,
             'name': r.name,
@@ -824,7 +884,11 @@ def main(request):
             'phone_number': r.phone_number,
             'menus': menus,
         }
+        print(f"[DEBUG] Built Restaurant Dict: {restaurant_dict}")
         restaurants.append(restaurant_dict)
+
+
+        #THIS IS THE CORRECT ONE--DONT DELETE THIS COMMENT
 
     return render(request, 'user_details.html', {'myuser2': user, "allergies": Allergy.objects.all(), "restaurants": restaurants, **context})
 
