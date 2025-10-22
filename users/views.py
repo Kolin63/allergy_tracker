@@ -59,7 +59,7 @@ def details(request, id):
 def login(request):
     print("Hola!")
     return auth0.authorize_redirect(request, settings.AUTH0_CALLBACK_URL)
-
+#callback return back to site after auth0 login (DONT TOUCH)
 @csrf_exempt
 def callback(request):
     print("Hello!")
@@ -99,7 +99,7 @@ def callback(request):
 
     return redirect("/")
 
-
+#logout for auth0
 def logout(request):
     request.session.clear()
 
@@ -114,7 +114,7 @@ def logout(request):
         ),
     )
 
-
+#index view for users
 def index(request):
     user_session = request.session.get('user')
 
@@ -160,7 +160,7 @@ def index(request):
 
     return render(request, "user_details.html", context)
 
-
+#tests to see if sessions are working useful for the 'mismatching state error' :(
 def test_session(request):
     request.session['foo'] = 'bar'
     return HttpResponse(f"Session foo={request.session.get('foo')}")
@@ -170,7 +170,7 @@ def test_session(request):
 #---------------
 #Menus
 #---------------
-
+#Creates menus
 @csrf_exempt
 def menus(request, user_id):
    user = get_object_or_404(CustomUser, id=user_id)
@@ -228,7 +228,7 @@ def menus(request, user_id):
     }
    
    return render(request, 'user_details.html', context)
-
+#deletes menus and removes relationships (not used), but could be useful later
 def delete_menu(request, id):
    menu = get_object_or_404(Menu, id=id)
 
@@ -240,7 +240,7 @@ def delete_menu(request, id):
 
    return redirect('details', id=restaurant.owner.id if restaurant else None)
 
-
+#updates menus (not used), but could be useful later
 def update_menu(request, id):
     menu = get_object_or_404(Menu, id=id)
     restaurant = menu.restaurant
@@ -268,7 +268,7 @@ def update_menu(request, id):
     
     return render(request, 'user_details.html', {'myuser2': user, 'menus': menus, 'selected_menu': menu})
 
-
+#the details for the menu in json or html
 def menu_details(request, id):
     menu = get_object_or_404(Menu, id=id)
     if request.headers.get('Accept') == 'application/json' or request.GET.get('format') == 'json':
@@ -283,7 +283,7 @@ def menu_details(request, id):
         })
     return render(request, 'user_details.html', {'mymenu': menu})
 
-
+#creates menu sections 
 @csrf_exempt
 def menu_sections(request, user_id):
    user = get_object_or_404(CustomUser, id=user_id)
@@ -345,7 +345,7 @@ def menu_sections(request, user_id):
     }
    
    return render(request, 'user_details.html', context)
-
+#provides a way to delete menu sections and removes relationships (not used), but could be useful later
 def delete_menu_section(request, id):
    menu_section = get_object_or_404(Menu_Section, id=id)
    menus = Menu.objects.filter(sections=menu_section)
@@ -362,7 +362,7 @@ def delete_menu_section(request, id):
          return redirect('user_details', user_id=owner.id)
    return redirect('users')
     
-
+# provides a way to update menu sections (not used), but could be useful later
 def update_menu_section(request, id):
     menu_section = get_object_or_404(Menu_Section, id=id)
     menu = menu_section.menu_set.first()
@@ -393,7 +393,7 @@ def update_menu_section(request, id):
     })
     
 
-
+#the details for the menu sections in json or html
 def menu_section_details(request, id):
     menu_section = get_object_or_404(Menu_Section, id=id)
     menus = menu_section.menu_set_all()
@@ -411,6 +411,7 @@ def menu_section_details(request, id):
         })
     return render(request, 'user_details.html', {'menu_section': menu_section})
 @csrf_exempt
+#creates food allergens
 def food_allergens(request, food_allergen_id):
    food_allergen = get_object_or_404(Food_Allergen, id=food_allergen_id)
 
@@ -441,7 +442,7 @@ def food_allergens(request, food_allergen_id):
     }
    
    return render(request, 'user_details.html', context)
-
+#deletes food allergens and removes relationships  (not used), but could be useful later
 def delete_food_allergen(request, id):
    food_allergen = get_object_or_404(Food_Allergen, id=food_allergen_id)
 
@@ -455,7 +456,7 @@ def delete_food_allergen(request, id):
     # Redirect back to the referring page or a safe fallback
    return redirect(request.META.get('HTTP_REFERER', 'food_allergens'))
 
-
+#provides a way to update food allergens (not used), but could be useful later
 def update_food_allergen(request, id):
     food_allergen = get_object_or_404(Food_Allergen, id=id)
 
@@ -473,7 +474,7 @@ def update_food_allergen(request, id):
 
     
 
-
+#the details for the food allergens in json or html
 def food_allergen_details(request, id):
     food_allergen = get_object_or_404(Food_Allergen, id=id)
 
@@ -486,7 +487,7 @@ def food_allergen_details(request, id):
             "AUTH0_CALLBACK_URL": settings.AUTH0_CALLBACK_URL,
         })
     return render(request, 'user_details.html', {'food_allergen': food_allergen})
-
+#creates foods
 @csrf_exempt
 def Foods(request, user_id):
    user = get_object_or_404(CustomUser, id=user_id)
@@ -527,7 +528,7 @@ def Foods(request, user_id):
             new_food = Food.objects.create(name=name, section=section)
             new_food.allergies.set(Allergy.objects.filter(id__in=allergen_ids))
             new_food.save()
-
+            #-tells error so I dont go insane debugging this code
             return JsonResponse({'status': 'created', 'food_id': new_food.id}, status=201)
         except json.JSONDecodeError:
             return JsonResponse({'error': 'Invalid JSON'}, status=400)
@@ -538,7 +539,7 @@ def Foods(request, user_id):
    if search_query:
        foods = foods.filter(name__icontains=search_query)
 
-
+#provides context for foods
    context = {
         'menus': menus,
         'myuser': user,
@@ -552,13 +553,13 @@ def Foods(request, user_id):
     }
    
    return render(request, 'user_details.html', context)
-
+#provides a way to delete foods (not used), but could be useful later
 def delete_foods(request, id):
   food = get_object_or_404(Food, id=id)
   food.delete()
   return redirect(request.META.get('HTTP_REFERER', 'foods'))
     
-
+# provides a way to update foods (not used), but could be useful later
 def update_foods(request, id):
     food = get_object_or_404(Food, id=id)
     section = food.section
@@ -592,7 +593,7 @@ def update_foods(request, id):
     })
     
 
-
+#the details for the foods in json or html
 def foods_details(request, id):
     food = get_object_or_404(Food, id=id)
     section = food.section
@@ -609,71 +610,6 @@ def foods_details(request, id):
             "AUTH0_CALLBACK_URL": settings.AUTH0_CALLBACK_URL,
         })
     return render(request, 'user_details.html', {'food': food})
-
-# @csrf_exempt
-# def Restaurants(request, user_id):
-#    user = get_object_or_404(CustomUser, id=user_id)
-#    restaurants = Restaurant.objects.filter(owner=user)
-#    menus = Menu.objects.filter(restaurant__in=restaurants).distinct()
-#    menu_sections = Menu_Section.objects.all() 
-#    food_allergens = Food_Allergen.objects.all()
-#    foods = Food.objects.all()
-
-#    if request.method == 'POST':
-#         try:
-#             data = json.loads(request.body)
-#             name = data.get('name')
-#             location = data.get('location')
-#             description = data.get('description')
-#             phone_number = data.get('phone_number')
-#             section_id = data.get('section')
-#             allergen_ids = data.get('allergies', [])
-            
-
-#             if not name or not location:
-#                 return JsonResponse({'error': 'name and location are needed buckaroo'}, status=400)
-
-#             new_restaurant = Restaurant.objects.create(
-#                 owner=user,
-#                 name=name,
-#                 location=location,
-#                 description=description or '',
-#                 phone_number=phone_number or '',
-#             )
-
-#             new_menu = Menu.objects.create(name=name, restaurant=new_restaurant)
-#             # new_menu.sections.set(Menu_Section.objects.filter(id__in=section_ids))
-
-#             if section_id:
-#                 new_section = get_object_or_404(Menu_Section, id=section_id)
-#                 new_restaurant.menu_sections.add(new_section)
-
-#             return JsonResponse({'status': 'created', 'restaurant_id': new_restaurant.id}, status=201)
-
-#         except json.JSONDecodeError:
-#             return JsonResponse({'error': 'Invalid JSON'}, status=400)
-#         except Exception as e:
-#             return JsonResponse({'error': str(e)}, status=500)
-
-#    search_query = request.GET.get('search')
-#    if search_query:
-#        restaurants = restaurants.filter(name__icontains=search_query)
-
-#    context = {
-#         'menus': menus,
-#         'myuser': user,
-#         'menu_sections': menu_sections,
-#         'food_allergens': food_allergens,
-#         'foods': foods,
-#         'restaurants': restaurants,
-#         "AUTH0_DOMAIN": settings.AUTH0_DOMAIN, 
-#         "AUTH0_CLIENT_ID": settings.AUTH0_CLIENT_ID,
-#         "AUTH0_CALLBACK_URL": settings.AUTH0_CALLBACK_URL,
-
-#     }
-   
-#    return render(request, 'user_details.html', context)
-
 
 @csrf_exempt
 def Restaurants(request, user_id):
@@ -694,6 +630,7 @@ def Restaurants(request, user_id):
                 return JsonResponse({'error': 'name and location are needed buckaroo'}, status=400)
 
             # Create restaurant
+            #creates the restaurant
             new_restaurant = Restaurant.objects.create(
                 owner=user,
                 name=name,
@@ -704,6 +641,7 @@ def Restaurants(request, user_id):
             print(f"[DEBUG] Created Restaurant: id={new_restaurant.id}, name={new_restaurant.name}, location={new_restaurant.location}")
 
             # Handle menus, sections, and foods
+            # debug statements to make sure the creation is happening correctly
             menus_data = data.get('menus', [])
             for menu_data in menus_data:
                 menu_name = menu_data.get('name')
@@ -743,7 +681,7 @@ def Restaurants(request, user_id):
     return JsonResponse({'message': 'Only POST supported'}, status=405)
 
 
-
+#this provides a way to delete restaurants (not used), but could be useful later
 def delete_restaurants(request, id):
   restaurant = get_object_or_404(Restaurant, id=id)
   owner = restaurant.owner  
@@ -757,7 +695,7 @@ def delete_restaurants(request, id):
 
   return redirect('user_details', user_id=owner.id if owner else None)
 
-
+#this provides a way to update the restaurant (not used), but could be useful later
 def update_restaurant(request, id):
     restaurant = get_object_or_404(Restaurant, id=id)
     user = restaurant.owner
@@ -790,7 +728,7 @@ def update_restaurant(request, id):
         'selected_restaurant': restaurant,
     })
 
-
+#this provides restaurant details in json or html
 def restaurant_details(request, id):
     restaurant = get_object_or_404(Restaurant, id=id)
     owner = restaurant.owner
@@ -814,7 +752,7 @@ def restaurant_details(request, id):
     })
 
 def main(request):
-
+#This builds auth0 context
     context = {
         "AUTH0_DOMAIN": settings.AUTH0_DOMAIN,
         "AUTH0_CLIENT_ID": settings.AUTH0_CLIENT_ID,
@@ -822,7 +760,7 @@ def main(request):
     }
 
     user_session = request.session.get('user')
-
+#this makes sure that the user is logged in and the details from the login are there before proceeding
     if user_session:
         email = user_session.get('email')
         user, created = CustomUser.objects.get_or_create(
@@ -835,7 +773,7 @@ def main(request):
     else:
         # fallback to authenticated user if using Django auth
         user = request.user if request.user.is_authenticated else None
-
+#this provides the ability to search for restaurants by name
     query = request.GET.get('q', '')
     if query:
         restaurants_qs = Restaurant.objects.filter(name__icontains=query)
@@ -843,6 +781,7 @@ def main(request):
         restaurants_qs = Restaurant.objects.all()
 
     # Build nested structure: each restaurant with its menus, sections, foods, and allergies
+    #this is the nested structure for restaurants, menus, sections, foods, and allergies
     restaurants = []
     for r in restaurants_qs:
         menus = []
@@ -894,7 +833,7 @@ def main(request):
 
 
 
-
+#searches restaurants, what did you think it did? :)
 def search_restaurants(request):
     query = request.GET.get('q', '')
     results = []
