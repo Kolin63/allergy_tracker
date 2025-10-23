@@ -8,7 +8,7 @@ class CustomUser(AbstractUser):
     ROLE_CHOICES = [
         ("restaurant", "Restaurant"),
         ("patient", "Patient"),
-    
+
     ]
     allergies= models.ManyToManyField(Allergy)
 
@@ -34,7 +34,7 @@ class Menu(models.Model):
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name='menus', null=True)
     def __str__(self):
         return self.name
-    
+
 class Food_Allergen(models.Model):
     ALLERGY_CHOICES = [
         ("milk", "Milk"),
@@ -46,15 +46,15 @@ class Food_Allergen(models.Model):
         ("soybeans", "Soybeans"),
         ("sesame", "Sesame"),
         ("fish", "Fish"),
-        ("Nuts", "nuts")
-    
+        ("nuts", "Nuts")
+
     ]
 
     allergen = models.CharField(choices=ALLERGY_CHOICES, max_length=255, null=True)
 
     def __str__(self):
         return self.allergen
-    
+
 class Food(models.Model):
     name =  models.CharField(max_length=255 , null = True)
     allergies = models.ManyToManyField(Food_Allergen)
@@ -65,10 +65,10 @@ class Food(models.Model):
 # - complete allergy model :)
 #      - more methods (urls/views) to manage allergies (editing/deleting) - only allergist - check session before doing operation
 #                                                                                          - the users model can also have built-in methods that the allergy methods call/use themselves
-# - complete users methods that will let them edit info on the edit page 
-#       - Store patient information in users model that people put themselves 
+# - complete users methods that will let them edit info on the edit page
+#       - Store patient information in users model that people put themselves
 # - Check out Postman application that is helpful when debugging methods
 # - Restuarants model/ create,update,fetch, delete :)
-# - Menu Section model, create, update, fetch, delete 
+# - Menu Section model, create, update, fetch, delete
 # - restaurant id/ many to many field
 
